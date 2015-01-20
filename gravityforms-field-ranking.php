@@ -31,6 +31,12 @@ if ( ! class_exists( 'GravityForms_Field_Ranking' ) ) :
 final class GravityForms_Field_Ranking {
 
 	/**
+	 * The field type name
+	 * @var string
+	 */
+	protected $type = 'rank';
+
+	/**
 	 * Setup and return the singleton pattern
 	 *
 	 * @since 1.0.0
@@ -98,12 +104,78 @@ final class GravityForms_Field_Ranking {
 	 * @since 1.0.0
 	 */
 	private function setup_actions() {
-		// Setup actions
+		
+		// Add field button
+		add_filter( 'gform_add_field_buttons', array( $this, 'add_field_button' ) );
+
+		// Set field title
+		add_filter( 'gform_field_type_title', array( $this, 'set_field_title' ) );
+
+		// Field classes
+		add_filter( 'gform_field_css_class', array( $this, 'field_classes' ), 10, 2 );
 	}
 
 	/** Public methods **************************************************/
 
-	// Do stuff
+	/**
+	 * Add the plugin's field button to GF's buttons
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $field_groups Groups of field buttons
+	 * @return array Groups of field buttons
+	 */
+	public function add_field_button( $field_groups ) {
+
+		// Get the Standard Fields group position
+		$group = array_search( 'standard_fields', wp_list_pluck( $field_groups, 'name' ) );
+
+		// Append to the Standard Fields group
+		$field_groups[ $group ]['fields'][] = array(
+			'class'   => 'button',
+			'value'   => __( 'Rank', 'gravityforms-field-ranking' ),
+			'onclick' => "StartAddField( '{$this->type}' );" // Default GF onclick function
+		);
+
+		return $field_groups;
+	}
+
+	/**
+	 * Return the proper field title for the plugin's field
+	 *
+	 * @since 1.0.0
+	 * 
+	 * @param string $type Field type
+	 * @return string Field title or field type
+	 */
+	public function set_field_title( $type ) {
+
+		// For Rank fields, name accordingly
+		if ( $this->type === $type ) {
+			$type = __( 'Rank', 'gravityforms-field-ranking' );
+		}
+
+		return $type;
+	}
+
+	/**
+	 * Manipulate the field's class names
+	 *
+	 * @since 1.0.0
+	 * 
+	 * @param string $classes Field class names
+	 * @param array $field Field data
+	 * @return string Field class names
+	 */
+	public function field_classes( $classes, $field ) {
+
+		// For Rank fields, manipulate class names
+		if ( $this->type === $field['type'] ) {
+			$classes .= ' rank-field-options';
+		}
+
+		return $classes;
+	}
 }
 
 /**
