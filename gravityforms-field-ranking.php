@@ -1,43 +1,43 @@
 <?php
 
 /**
- * The Gravity Forms Field Options Ranking Plugin
+ * The Gravity Forms Field Ranking Plugin
  * 
- * @package Gravity Forms Field Options Ranking
+ * @package Gravity Forms Field Ranking
  * @subpackage Main
  */
 
 /**
- * Plugin Name:       Gravity Forms Field Options Ranking
+ * Plugin Name:       Gravity Forms Field Ranking
  * Description:       Adds a field to Gravity Forms to rank options
- * Plugin URI:        https://github.com/lmoffereins/gravityforms-field-options-ranking/
+ * Plugin URI:        https://github.com/lmoffereins/gravityforms-field-ranking/
  * Version:           1.0.0
  * Author:            Laurens Offereins
  * Author URI:        https://github.com/lmoffereins/
- * Text Domain:       gravityforms-field-options-ranking
+ * Text Domain:       gravityforms-field-ranking
  * Domain Path:       /languages/
- * GitHub Plugin URI: lmoffereins/gravityforms-field-options-ranking
+ * GitHub Plugin URI: lmoffereins/gravityforms-field-ranking
  */
 
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
-if ( ! class_exists( 'GravityForms_Field_Options_Ranking' ) ) :
+if ( ! class_exists( 'GravityForms_Field_Ranking' ) ) :
 /**
  * The main plugin class
  *
  * @since 1.0.0
  */
-final class GravityForms_Field_Options_Ranking {
+final class GravityForms_Field_Ranking {
 
 	/**
 	 * Setup and return the singleton pattern
 	 *
 	 * @since 1.0.0
 	 *
-	 * @uses GravityForms_Field_Options_Ranking::setup_globals()
-	 * @uses GravityForms_Field_Options_Ranking::setup_actions()
-	 * @return The single GravityForms_Field_Options_Ranking
+	 * @uses GravityForms_Field_Ranking::setup_globals()
+	 * @uses GravityForms_Field_Ranking::setup_actions()
+	 * @return The single GravityForms_Field_Ranking
 	 */
 	public static function instance() {
 
@@ -45,7 +45,7 @@ final class GravityForms_Field_Options_Ranking {
 		static $instance = null;
 
 		if ( null === $instance ) {
-			$instance = new GravityForms_Field_Options_Ranking;
+			$instance = new GravityForms_Field_Ranking;
 			$instance->setup_globals();
 			$instance->setup_actions();
 		}
@@ -89,7 +89,7 @@ final class GravityForms_Field_Options_Ranking {
 		/** Misc **************************************************************/
 		
 		$this->extend       = new stdClass();
-		$this->domain       = 'gravityforms-field-options-ranking';
+		$this->domain       = 'gravityforms-field-ranking';
 	}
 
 	/**
@@ -111,18 +111,18 @@ final class GravityForms_Field_Options_Ranking {
  *
  * @since 1.0.0
  * 
- * @return GravityForms_Field_Options_Ranking
+ * @return GravityForms_Field_Ranking
  */
-function gravityforms_field_options_ranking() {
+function gravityforms_field_ranking() {
 
 	// Bail when GF is not active
 	if ( ! class_exists( 'GFForms' ) )
 		return;
 
-	return GravityForms_Field_Options_Ranking::instance();
+	return GravityForms_Field_Ranking::instance();
 }
 
 // Initiate on plugins_loaded
-add_action( 'plugins_loaded', 'gravityforms_field_options_ranking' );
+add_action( 'plugins_loaded', 'gravityforms_field_ranking' );
 
 endif; // class_exists
