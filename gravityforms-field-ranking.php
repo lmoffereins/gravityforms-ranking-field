@@ -31,10 +31,10 @@ if ( ! class_exists( 'GravityForms_Field_Ranking' ) ) :
 final class GravityForms_Field_Ranking {
 
 	/**
-	 * The field type name
+	 * The plugin's field type name
 	 * @var string
 	 */
-	protected $type = 'rank';
+	protected $type = 'ranking';
 
 	/**
 	 * Setup and return the singleton pattern
@@ -133,7 +133,7 @@ final class GravityForms_Field_Ranking {
 		// Append to the Standard Fields group
 		$field_groups[ $group ]['fields'][] = array(
 			'class'   => 'button',
-			'value'   => __( 'Rank', 'gravityforms-field-ranking' ),
+			'value'   => __( 'Ranking', 'gravityforms-field-ranking' ),
 			'onclick' => "StartAddField( '{$this->type}' );" // Default GF onclick function
 		);
 
@@ -150,9 +150,9 @@ final class GravityForms_Field_Ranking {
 	 */
 	public function set_field_title( $type ) {
 
-		// For Rank fields, name accordingly
+		// For Ranking fields, name accordingly
 		if ( $this->type === $type ) {
-			$type = __( 'Rank', 'gravityforms-field-ranking' );
+			$type = __( 'Ranking', 'gravityforms-field-ranking' );
 		}
 
 		return $type;
@@ -169,7 +169,7 @@ final class GravityForms_Field_Ranking {
 	 */
 	public function field_classes( $classes, $field ) {
 
-		// For Rank fields, manipulate class names
+		// For Ranking fields, manipulate class names
 		if ( $this->type === $field['type'] ) {
 			$classes .= ' rank-field-options';
 		}
