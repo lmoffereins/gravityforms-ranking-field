@@ -121,6 +121,18 @@ final class GravityForms_Field_Ranking {
 	/** Public methods **************************************************/
 
 	/**
+	 * Return whether the given field is a Ranking field
+	 *
+	 * @since 1.0.0
+	 * 
+	 * @param array|string $field Field data or field type
+	 * @return bool This is a Ranking field
+	 */
+	public function is_ranking_field( $field ) {
+		return $this->type === ( isset( $field['type'] ) ? $field['type'] : $field );
+	}
+
+	/**
 	 * Add the plugin's field button to GF's buttons
 	 *
 	 * @since 1.0.0
@@ -154,7 +166,7 @@ final class GravityForms_Field_Ranking {
 	public function set_field_title( $type ) {
 
 		// For Ranking fields, name accordingly
-		if ( $this->type === $type ) {
+		if ( $this->is_ranking_field( $type ) ) {
 			$title = __( 'Ranking', 'gravityforms-field-ranking' );
 		} else {
 			$title = $type;
@@ -178,7 +190,7 @@ final class GravityForms_Field_Ranking {
 	public function render_field_input( $input, $field, $value, $lead_id, $form_id ) {
 
 		// Bail when not rendering a Ranking field
-		if ( $this->type !== $field['type'] )
+		if ( ! $this->is_ranking_field( $field ) )
 			return $input;
 
 		// Define input attributes
@@ -297,7 +309,7 @@ final class GravityForms_Field_Ranking {
 	public function field_classes( $classes, $field ) {
 
 		// For Ranking fields, manipulate class names
-		if ( $this->type === $field['type'] ) {
+		if ( $this->is_ranking_field( $field ) ) {
 			$classes .= ' rank-field-options';
 		}
 
