@@ -119,9 +119,6 @@ final class GravityForms_Field_Ranking {
 
 		// Add form scripts
 		add_action( 'gform_enqueue_scripts', array( $this, 'form_scripts' ) );
-
-		// Field classes
-		add_filter( 'gform_field_css_class', array( $this, 'field_classes' ), 10, 2 );
 	}
 
 	/** Public methods **************************************************/
@@ -146,7 +143,7 @@ final class GravityForms_Field_Ranking {
 	 * @param object|int $form Form data or form ID
 	 * @return bool Form contains a Ranking field
 	 */
-	public function has_form_ranking_field( $form ) {
+	public function has_form_ranking_fields( $form ) {
 		return (bool) $this->get_form_ranking_fields( $form );
 	}
 
@@ -421,7 +418,7 @@ final class GravityForms_Field_Ranking {
 	public function form_scripts( $form, $ajax ) {
 
 		// Bail when this form does not contain a Ranking Field
-		if ( ! $this->has_form_ranking_field( $form ) )
+		if ( ! $this->has_form_ranking_fields( $form ) )
 			return;
 
 		add_action( 'wp_footer', array( $this, 'field_styles' ) );
@@ -515,25 +512,6 @@ final class GravityForms_Field_Ranking {
 		</style>
 
 		<?php
-	}
-
-	/**
-	 * Manipulate the field's class names
-	 *
-	 * @since 1.0.0
-	 * 
-	 * @param string $classes Field class names
-	 * @param array $field Field data
-	 * @return string Field class names
-	 */
-	public function field_classes( $classes, $field ) {
-
-		// For Ranking fields, manipulate class names
-		if ( $this->is_ranking_field( $field ) ) {
-			$classes .= ' ranking-choices';
-		}
-
-		return $classes;
 	}
 }
 
