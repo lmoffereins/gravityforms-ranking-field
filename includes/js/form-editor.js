@@ -16,7 +16,7 @@
 	 *
 	 * The logic is based on the 'checkbox' field type. 
 	 * The function is defined within the global window scope and is
-	 * used by GF in SetDefaultValues().
+	 * executed by GF in SetDefaultValues().
 	 *
 	 * @since 1.0.0
 	 *
@@ -26,6 +26,7 @@
 	 * @return {object} field Field data
 	 */
 	window[ 'SetDefaultValues_' + settings.type ] = function( field ) {
+		var i;
 
 		// Default to 'Untitled' field label
 		if ( ! field.label ) {
@@ -35,15 +36,15 @@
 		// Set default field choices
 		if ( ! field.choices ) {
 			field.choices = [];
-			for ( var i = 1; i <= settings.defaultChoices.length; i++ ) {
-				field.choices.push( new Choice( settings.defaultChoices[i - 1].text, settings.defaultChoices[i - 1].value ) );
+			for ( i = 0; i < settings.defaultChoices.length; i++ ) {
+				field.choices.push( new Choice( settings.defaultChoices[ i ].text, settings.defaultChoices[ i ].value ) );
 			}
 		}
 
 		// Setup field inputs
 		field.inputs = [];
-		for ( var i = 1; i <= field.choices.length; i++ ) {
-			field.inputs.push( new Input( field.id + '.' + i, field.choices[i - 1].text ) );
+		for ( i = 0; i < field.choices.length; i++ ) {
+			field.inputs.push( new Input( field.id + '.' + ( i + 1 ), field.choices[ i ].text ) );
 		}
 
 		return field;
@@ -57,11 +58,14 @@
 	 */
 
 	/**
-	 * Override jQuery's html method to manipulate UpdateFieldChoices() for Ranking fields
+	 * Override jQuery's html method to manipulate UpdateFieldChoices() for 
+	 * Ranking fields
 	 *
+	 * The logic is based on the 'checkbox' field type.
+	 * 
 	 * @since 1.0.0
 	 *
-	 * @see UpdateFieldChoices() Mimicing logic for the 'checkbox' field type
+	 * @see UpdateFieldChoices() 
 	 * 
 	 * @param  {object} $    jQuery
 	 * @param  {object} html jQuery's original html method

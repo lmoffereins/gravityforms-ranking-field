@@ -111,11 +111,14 @@ final class GravityForms_Field_Ranking {
 		// Set field title
 		add_filter( 'gform_field_type_title', array( $this, 'set_field_title' ) );
 
-		// Render field input
-		add_filter( 'gform_field_input', array( $this, 'render_field_input' ), 10, 5 );
+		// Render the field
+		add_filter( 'gform_field_input', array( $this, 'render_field' ), 10, 5 );
 
-		// Enqueue editor js
-		add_action( 'gform_editor_js', array( $this, 'enqueue_admin_scripts' ) );
+		// Add editor scripts
+		add_action( 'gform_editor_js', array( $this, 'admin_scripts' ) );
+
+		// Add form scripts
+		add_action( 'gform_enqueue_scripts', array( $this, 'form_scripts' ) );
 
 		// Field classes
 		add_filter( 'gform_field_css_class', array( $this, 'field_classes' ), 10, 2 );
@@ -133,6 +136,44 @@ final class GravityForms_Field_Ranking {
 	 */
 	public function is_ranking_field( $field ) {
 		return $this->type === ( isset( $field['type'] ) ? $field['type'] : $field );
+	}
+
+	/**
+	 * Return whether the given form contains a Ranking field
+	 *
+	 * @since 1.0.0
+	 * 
+	 * @param object|int $form Form data or form ID
+	 * @return bool Form contains a Ranking field
+	 */
+	public function has_form_ranking_field( $form ) {
+		return (bool) $this->get_form_ranking_fields( $form );
+	}
+
+	/**
+	 * Return whether the given form contains a Ranking field
+	 *
+	 * @since 1.0.0
+	 * 
+	 * @param object|int $form Form data or form ID
+	 * @return array Form field ids or empty array when no Ranking fields found
+	 */
+	public function get_form_ranking_fields( $form ) {
+
+		// Get the form by form ID
+		if ( ! is_array( $form ) ) {
+			$form = GFFormsModel::get_form_meta( (int) $form );
+		}
+
+		// This form has Ranking fields
+		if ( isset( $form['fields'] ) ) {
+			$fields = wp_list_filter( $form['fields'], array( 'type' => $this->type ) );
+			if ( ! empty( $fields ) ) {
+				return wp_list_pluck( $fields, 'id' );
+			}
+		}
+
+		return array();
 	}
 
 	/**
@@ -190,7 +231,7 @@ final class GravityForms_Field_Ranking {
 	 * @param int $form_id Form ID
 	 * @return string Field's input markup
 	 */
-	public function render_field_input( $input, $field, $value, $lead_id, $form_id ) {
+	public function render_field( $input, $field, $value, $lead_id, $form_id ) {
 
 		// Bail when not rendering a Ranking field
 		if ( ! $this->is_ranking_field( $field ) )
@@ -199,7 +240,7 @@ final class GravityForms_Field_Ranking {
 		// Define field attributes
 		$name    = 'input_' . $form_id . '_' . $field['id'];
 		$class   = isset( $field['cssClass'] ) ? array_map( 'esc_attr', explode( ' ', $field['cssClass'] ) ) : array();
-		$class[] = $wrapper = 'gfield_' . $this->type;
+		$class[] = 'gfield_' . $this->type;
 		$class[] = ! isset( $field['arrowType'] ) || ! in_array( $field['arrowType'], array( 'arrow', 'arrow-alt', 'arrow-alt2', 'sort' ) ) ? 'icon-arrow' : 'icon-' . $field['arrowType'];
 
 		// Start output buffer
@@ -213,89 +254,12 @@ final class GravityForms_Field_Ranking {
 			</ol>
 		</div>
 
-		<style>
-
-			/**
-			 * Ranking list
-			 */
-			.<?php echo $wrapper; ?> {
-				margin: 6px 0;
-				list-style: none;
-				counter-reset: gfield-ranking-counter;
-			}
-			#gform_fields .<?php echo $wrapper; ?> li {
-				margin: 0 0 6px;
-				padding: 0;
-			}
-			.<?php echo $wrapper; ?> li {
-				counter-increment: gfield-ranking-counter;
-			}
-
-			/**
-			 * Ranking icons
-			 */
-			.<?php echo $wrapper; ?> li i {
-				color: #888;
-				cursor: pointer;
-			}
-			.<?php echo $wrapper; ?>.icon-arrow li i:nth-child(1):before {
-				content: "\f142";
-			}
-			.<?php echo $wrapper; ?>.icon-arrow li i:nth-child(2):before {
-				content: "\f140";
-			}
-			.<?php echo $wrapper; ?>.icon-arrow-alt li i:nth-child(1):before {
-				content: "\f342";
-			}
-			.<?php echo $wrapper; ?>.icon-arrow-alt li i:nth-child(2):before {
-				content: "\f346";
-			}
-			.<?php echo $wrapper; ?>.icon-arrow-alt2 li i:nth-child(1):before {
-				content: "\f343";
-			}
-			.<?php echo $wrapper; ?>.icon-arrow-alt2 li i:nth-child(2):before {
-				content: "\f347";
-			}
-			.<?php echo $wrapper; ?>.icon-sort li i {
-				cursor: move;
-			}
-			.<?php echo $wrapper; ?>.icon-sort li i:before {
-				content: "\f156";
-			}
-			.<?php echo $wrapper; ?>.icon-sort li i:nth-child(2) {
-				display: none;
-			}
-			.<?php echo $wrapper; ?>:not(.icon-sort) li:first-of-type i:first-of-type,
-			.<?php echo $wrapper; ?>:not(.icon-sort) li:last-of-type i:last-of-type,
-			.wp-admin .<?php echo $wrapper; ?> li i {
-				color: #d5d5d5;
-				cursor: inherit;
-			}
-				.<?php echo $wrapper; ?>:not(.icon-sort) li i:hover {
-					background-color: #eee;
-				}
-
-			/**
-			 * Ranking label
-			 */
-			.<?php echo $wrapper; ?> li .item-label {
-				margin: 0 0 0 10px;
-			}
-			.<?php echo $wrapper; ?>:not(.icon-sort) li .item-label {
-				cursor: move;
-			}
-			.<?php echo $wrapper; ?> li .item-label:before {
-				content: counter(gfield-ranking-counter) ".";
-				margin: 0 5px 0 0;
-			}
-		</style>
-
 		<?php
 
 		// End output buffer
 		$input = ob_get_clean();
 
-		return apply_filters( 'gravityforms_field_ranking_field_input', $input, $field, $value, $lead_id, $form_id );
+		return apply_filters( 'gravityforms_field_ranking_field', $input, $field, $value, $lead_id, $form_id );
 	}
 
 		/**
@@ -392,7 +356,7 @@ final class GravityForms_Field_Ranking {
 		}
 
 	/**
-	 * Enqueue scripts for the field editor settings
+	 * Enqueue scripts for the form settings editor
 	 *
 	 * @since 1.0.0
 	 *
@@ -401,7 +365,7 @@ final class GravityForms_Field_Ranking {
 	 * @uses apply_filters() Calls 'gravityforms_field_ranking_editor_settings'
 	 * @uses wp_localize_script()
 	 */
-	public function enqueue_admin_scripts() { 
+	public function admin_scripts() { 
 
 		// Register and enqueue form editor script
 		wp_enqueue_script( 'gravityforms-field-ranking-editor', $this->includes_url . 'js/form-editor.js', array( 'gform_form_editor' ), $this->version, true );
@@ -423,6 +387,134 @@ final class GravityForms_Field_Ranking {
 
 		// Localize form editor script
 		wp_localize_script( 'gravityforms-field-ranking-editor', '_gfFieldRankingL10n', $localize );
+
+		// Add form settings editor styles
+		add_action( 'admin_footer', array( $this, 'field_styles' ) );
+		add_action( 'admin_footer', array( $this, 'admin_styles' ) );
+	}
+
+	/**
+	 * Output styles for the form settings editor
+	 *
+	 * @since 1.0.0
+	 */
+	public function admin_styles() { ?>
+
+		<style>
+			/* Hide radio inputs */
+			.field_selected.<?php echo $this->type; ?>-choices .choices_setting .gfield_choice_radio {
+				display: none;
+			}
+		</style>
+
+		<?php
+	}
+
+	/**
+	 * Enqueue scripts for the given form on the front-end
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $form Form data
+	 * @param bool $ajax Whether we're doing an AJAX form
+	 */
+	public function form_scripts( $form, $ajax ) {
+
+		// Bail when this form does not contain a Ranking Field
+		if ( ! $this->has_form_ranking_field( $form ) )
+			return;
+
+		add_action( 'wp_footer', array( $this, 'field_styles' ) );
+	}
+
+	/**
+	 * Output styles for the Ranking field
+	 *
+	 * @since 1.0.0
+	 */
+	public function field_styles() { 
+
+		// Setup field choice wrapper
+		$wrapper = '.gfield_' . $this->type; ?>
+
+		<style>
+
+			/**
+			 * Ranking list
+			 */
+			<?php echo $wrapper; ?> {
+				margin: 6px 0;
+				list-style: none;
+				counter-reset: gfield-ranking-counter;
+			}
+			#gform_fields <?php echo $wrapper; ?> li {
+				margin: 0 0 6px;
+				padding: 0;
+			}
+			<?php echo $wrapper; ?> li {
+				counter-increment: gfield-ranking-counter;
+			}
+
+			/**
+			 * Ranking icons
+			 */
+			<?php echo $wrapper; ?> li i {
+				color: #888;
+				cursor: pointer;
+			}
+			<?php echo $wrapper; ?>.icon-arrow li i:nth-child(1):before {
+				content: "\f142";
+			}
+			<?php echo $wrapper; ?>.icon-arrow li i:nth-child(2):before {
+				content: "\f140";
+			}
+			<?php echo $wrapper; ?>.icon-arrow-alt li i:nth-child(1):before {
+				content: "\f342";
+			}
+			<?php echo $wrapper; ?>.icon-arrow-alt li i:nth-child(2):before {
+				content: "\f346";
+			}
+			<?php echo $wrapper; ?>.icon-arrow-alt2 li i:nth-child(1):before {
+				content: "\f343";
+			}
+			<?php echo $wrapper; ?>.icon-arrow-alt2 li i:nth-child(2):before {
+				content: "\f347";
+			}
+			<?php echo $wrapper; ?>.icon-sort li i {
+				cursor: move;
+			}
+			<?php echo $wrapper; ?>.icon-sort li i:before {
+				content: "\f156";
+			}
+			<?php echo $wrapper; ?>.icon-sort li i:nth-child(2) {
+				display: none;
+			}
+			<?php echo $wrapper; ?>:not(.icon-sort) li:first-of-type i:first-of-type,
+			<?php echo $wrapper; ?>:not(.icon-sort) li:last-of-type i:last-of-type,
+			.wp-admin <?php echo $wrapper; ?> li i {
+				color: #d5d5d5;
+				cursor: inherit;
+			}
+				<?php echo $wrapper; ?>:not(.icon-sort) li i:hover {
+					background-color: #eee;
+				}
+
+			/**
+			 * Ranking label
+			 */
+			<?php echo $wrapper; ?> li .item-label {
+				margin: 0 0 0 10px;
+			}
+			<?php echo $wrapper; ?>:not(.icon-sort) li .item-label {
+				cursor: move;
+			}
+			<?php echo $wrapper; ?> li .item-label:before {
+				content: counter(gfield-ranking-counter) ".";
+				margin: 0 5px 0 0;
+			}
+		</style>
+
+		<?php
 	}
 
 	/**
