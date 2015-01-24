@@ -114,6 +114,9 @@ final class GravityForms_Field_Ranking {
 		// Render field input
 		add_filter( 'gform_field_input', array( $this, 'render_field_input' ), 10, 5 );
 
+		// Enqueue editor js
+		add_action( 'gform_editor_js', array( $this, 'enqueue_admin_scripts' ) );
+
 		// Field classes
 		add_filter( 'gform_field_css_class', array( $this, 'field_classes' ), 10, 2 );
 	}
@@ -193,57 +196,95 @@ final class GravityForms_Field_Ranking {
 		if ( ! $this->is_ranking_field( $field ) )
 			return $input;
 
-		// Define input attributes
-		$name     = 'input_' . $form_id . '_' . $field['id'] . '[]';
-		$class    = isset( $field['cssClass'] ) ? esc_attr( $field['cssClass'] ) : '';
-		$tabindex = GFCommon::get_tabindex();
-		$arrow    = ! isset( $field['arrowType'] ) || ! in_array( $field['arrowType'], array( 'default', 'alt', 'alt2' ) ) ? 'default' : $field['arrowType'];
-		$arrow    = ( 'default' != $arrow ) ? '-' . $arrow : '';
+		// Define field attributes
+		$name    = 'input_' . $form_id . '_' . $field['id'];
+		$class   = isset( $field['cssClass'] ) ? array_map( 'esc_attr', explode( ' ', $field['cssClass'] ) ) : array();
+		$class[] = $wrapper = 'gfield_' . $this->type;
+		$class[] = ! isset( $field['arrowType'] ) || ! in_array( $field['arrowType'], array( 'arrow', 'arrow-alt', 'arrow-alt2', 'sort' ) ) ? 'icon-arrow' : 'icon-' . $field['arrowType'];
 
 		// Start output buffer
 		ob_start(); ?>
 
 		<div class="ginput_container">
-			<ol class="gfield_ranking sortable">
-				<?php foreach ( $this->get_field_options( $field, $value ) as $option_key => $option_label ) : ?>
-				<li class="sortable-item" data-value="<?php echo esc_attr( $option_key ); ?>">
-					<i class="dashicons dashicons-arrow-up<?php echo $arrow; ?>"></i><i class="dashicons dashicons-arrow-down<?php echo $arrow; ?>"></i>
-					<span class="item-label"><?php echo $option_label; ?></span>
-					<input type="hidden" name="<?php echo $name; ?>" value="<?php echo $option_key; ?>"/>
-				</li>
+			<ol class="<?php echo implode( ' ', $class ); ?>">
+				<?php foreach ( $this->get_field_choices( $field, $value ) as $choice ) : ?>
+					<?php echo $this->get_choice_template( $choice, $name ); ?>
 				<?php endforeach; ?>
 			</ol>
 		</div>
 
 		<style>
-			.gfield_ranking {
+
+			/**
+			 * Ranking list
+			 */
+			.<?php echo $wrapper; ?> {
 				margin: 6px 0;
 				list-style: none;
 				counter-reset: gfield-ranking-counter;
 			}
-			#gform_fields .gfield_ranking li {
+			#gform_fields .<?php echo $wrapper; ?> li {
 				margin: 0 0 6px;
 				padding: 0;
+			}
+			.<?php echo $wrapper; ?> li {
 				counter-increment: gfield-ranking-counter;
 			}
-			.gfield_ranking li i {
-				padding: 2px 0;
+
+			/**
+			 * Ranking icons
+			 */
+			.<?php echo $wrapper; ?> li i {
 				color: #888;
 				cursor: pointer;
 			}
-			.gfield_ranking li:first-of-type i:first-of-type,
-			.gfield_ranking li:last-of-type i:last-of-type {
+			.<?php echo $wrapper; ?>.icon-arrow li i:nth-child(1):before {
+				content: "\f142";
+			}
+			.<?php echo $wrapper; ?>.icon-arrow li i:nth-child(2):before {
+				content: "\f140";
+			}
+			.<?php echo $wrapper; ?>.icon-arrow-alt li i:nth-child(1):before {
+				content: "\f342";
+			}
+			.<?php echo $wrapper; ?>.icon-arrow-alt li i:nth-child(2):before {
+				content: "\f346";
+			}
+			.<?php echo $wrapper; ?>.icon-arrow-alt2 li i:nth-child(1):before {
+				content: "\f343";
+			}
+			.<?php echo $wrapper; ?>.icon-arrow-alt2 li i:nth-child(2):before {
+				content: "\f347";
+			}
+			.<?php echo $wrapper; ?>.icon-sort li i {
+				cursor: move;
+			}
+			.<?php echo $wrapper; ?>.icon-sort li i:before {
+				content: "\f156";
+			}
+			.<?php echo $wrapper; ?>.icon-sort li i:nth-child(2) {
+				display: none;
+			}
+			.<?php echo $wrapper; ?>:not(.icon-sort) li:first-of-type i:first-of-type,
+			.<?php echo $wrapper; ?>:not(.icon-sort) li:last-of-type i:last-of-type,
+			.wp-admin .<?php echo $wrapper; ?> li i {
 				color: #d5d5d5;
 				cursor: inherit;
 			}
-				.gfield_ranking i:hover {
+				.<?php echo $wrapper; ?>:not(.icon-sort) li i:hover {
 					background-color: #eee;
 				}
-			.gfield_ranking li .item-label {
-				cursor: move;
+
+			/**
+			 * Ranking label
+			 */
+			.<?php echo $wrapper; ?> li .item-label {
 				margin: 0 0 0 10px;
 			}
-			.gfield_ranking li .item-label:before {
+			.<?php echo $wrapper; ?>:not(.icon-sort) li .item-label {
+				cursor: move;
+			}
+			.<?php echo $wrapper; ?> li .item-label:before {
 				content: counter(gfield-ranking-counter) ".";
 				margin: 0 5px 0 0;
 			}
@@ -258,44 +299,131 @@ final class GravityForms_Field_Ranking {
 	}
 
 		/**
-		 * Return the input options for the given field
+		 * Return the input choices for the given field
 		 *
 		 * @since 1.0.0
 		 * 
 		 * @param array $field Field data
 		 * @param string $value Field input value
-		 * @return array Field options
+		 * @return array Field choices
 		 */
-		public function get_field_options( $field, $value ) {
+		public function get_field_choices( $field = array(), $value = array() ) {
 
-			// Field has no options
-			if ( ! isset( $field['options'] ) ) {
-				$field['options'] = array( 
-					1 => __( 'First Option',  'gravityforms-field-ranking' ),
-					2 => __( 'Second Option', 'gravityforms-field-ranking' ),
-					3 => __( 'Third Option',  'gravityforms-field-ranking' )
-				);
+			// Field has choices
+			if ( isset( $field['choices'] ) ) {
+				$choices = $field['choices'];
+
+			// Setup default choices
+			} else {
+				$choices = array();
+				foreach ( array(
+					__( 'First Choice',  'gravityforms-field-ranking' ),
+					__( 'Second Choice', 'gravityforms-field-ranking' ),
+					__( 'Third Choice',  'gravityforms-field-ranking' )
+				) as $choice ) {
+					$choices[] = array( 'text' => $choice, 'value' => $choice );
+				}
 			}
 
-			// Align options to ranked value
+			// Sort choices according to ranked value
 			if ( ! empty( $value ) ) {
-				if ( ! is_array( $value ) ) {
-					$value = explode( ',', $value );
-				}
 
-				// Sort options array by value order. http://stackoverflow.com/a/348418/3601434
+				// Sanitize value
+				$value = wp_parse_id_list( $value );
+
+				// Sort choices array by value order. http://stackoverflow.com/a/348418/3601434
 				$ordered = array();
 				foreach ( $value as $key ) {
-					if ( array_key_exists( $key, $field['options'] ) ) {
-						$ordered[ $key ] = $field['options'][ $key ];
-						unset( $field['options'][ $key ] );
+					if ( ! empty( $key ) && array_key_exists( $key, $choices ) ) {
+						$ordered[ $key ] = $choices[ $key ];
+						unset( $choices[ $key ] );
 					}
 				}
-				$field['options'] = $ordered + $field['options'];
+				$choices = $ordered + $choices;
 			}
 
-			return $field['options'];
+			return $choices;
 		}
+
+		/**
+		 * Return the (parsed) template for a single field's choice
+		 *
+		 * @since 1.0.0
+		 *
+		 * @uses GravityForms_Field_Ranking::get_tabindex()
+		 * @uses apply_filters() Calls 'gravityforms_field_ranking_choice_template'
+		 * 
+		 * @param array $choice Optional. Choice data to parse
+		 * @param string $name Optional. Input name to parse
+		 * @return string A single choice's template markup
+		 */
+		public function get_choice_template( $choice = array(), $name = '' ) {
+
+			// Start output buffer
+			ob_start(); 
+
+			// Output the choice template
+			?><li><i class="dashicons-before"<?php echo $this->get_tabindex(); ?>></i><i class="dashicons-before"<?php echo $this->get_tabindex(); ?>></i><span class="item-label">{{text}}</span><input type="hidden" name="{{name}}[]" value="{{value}}"/></li><?php 
+
+			// Return output buffer content
+			$tmpl = ob_get_clean();
+
+			// Parse choice data in template while we're at it
+			if ( ! empty( $choice ) && ! empty( $name ) ) {
+				$tmpl = str_replace( '{{text}}',  isset( $choice['text']  ) ? esc_attr( $choice['text']  ) : '', $tmpl );
+				$tmpl = str_replace( '{{value}}', isset( $choice['value'] ) ? esc_attr( $choice['value'] ) : '', $tmpl );
+				$tmpl = str_replace( '{{name}}', esc_attr( $name ), $tmpl );
+			}
+
+			return apply_filters( 'gravityforms_field_ranking_choice_template', $tmpl, $choice, $name );
+		}
+
+		/**
+		 * Return a js-ready version of GF's tabindex attribute
+		 * 
+		 * GF's version uses single-quotes for wrapping attribute values.
+		 *
+		 * @since 1.0.0
+		 * 
+		 * @return string Tabindex attribute
+		 */
+		public function get_tabindex() {
+			return GFCommon::$tab_index > 0 ? ' tabindex="' . GFCommon::$tab_index++ . '"' : '';
+		}
+
+	/**
+	 * Enqueue scripts for the field editor settings
+	 *
+	 * @since 1.0.0
+	 *
+	 * @uses wp_enqueue_script()
+	 * @uses apply_filters() Calls 'gravityforms_field_ranking_editor_localize'
+	 * @uses apply_filters() Calls 'gravityforms_field_ranking_editor_settings'
+	 * @uses wp_localize_script()
+	 */
+	public function enqueue_admin_scripts() { 
+
+		// Register and enqueue form editor script
+		wp_enqueue_script( 'gravityforms-field-ranking-editor', $this->includes_url . 'js/form-editor.js', array( 'gform_form_editor' ), $this->version, true );
+
+		// Define js strings
+		$localize = apply_filters( 'gravityforms_field_ranking_editor_localize', array(
+			'labelUntitled' => __( 'Untitled', 'gravityforms-field-ranking' ),
+		) );
+
+		// Define js settings
+		$settings = apply_filters( 'gravityforms_field_ranking_editor_settings', array(
+			'defaultChoices' => $this->get_field_choices(),
+			'choiceTemplate' => $this->get_choice_template(),
+		) );
+
+		// Merge strings and settings
+		$settings['type'] = $this->type;
+		$localize['settings'] = $settings;
+
+		// Localize form editor script
+		wp_localize_script( 'gravityforms-field-ranking-editor', '_gfFieldRankingL10n', $localize );
+	}
 
 	/**
 	 * Manipulate the field's class names
@@ -310,7 +438,7 @@ final class GravityForms_Field_Ranking {
 
 		// For Ranking fields, manipulate class names
 		if ( $this->is_ranking_field( $field ) ) {
-			$classes .= ' rank-field-options';
+			$classes .= ' ranking-choices';
 		}
 
 		return $classes;
