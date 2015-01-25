@@ -146,7 +146,7 @@ final class GravityForms_Field_Ranking {
 	 * @param object|int $form Form data or form ID
 	 * @return bool Form contains a Ranking field
 	 */
-	public function has_form_ranking_field( $form ) {
+	public function has_form_ranking_fields( $form ) {
 		return (bool) $this->get_form_ranking_fields( $form );
 	}
 
@@ -402,7 +402,7 @@ final class GravityForms_Field_Ranking {
 
 		<style>
 			/* Hide radio inputs */
-			.field_selected.<?php echo $this->type; ?>-choices .choices_setting .gfield_choice_radio {
+			.field_selected.<?php echo $this->type; ?>-field .choices_setting .gfield_choice_radio {
 				display: none;
 			}
 		</style>
@@ -421,7 +421,7 @@ final class GravityForms_Field_Ranking {
 	public function form_scripts( $form, $ajax ) {
 
 		// Bail when this form does not contain a Ranking Field
-		if ( ! $this->has_form_ranking_field( $form ) )
+		if ( ! $this->has_form_ranking_fields( $form ) )
 			return;
 
 		add_action( 'wp_footer', array( $this, 'field_styles' ) );
@@ -438,7 +438,6 @@ final class GravityForms_Field_Ranking {
 		$wrapper = '.gfield_' . $this->type; ?>
 
 		<style>
-
 			/**
 			 * Ranking list
 			 */
@@ -530,7 +529,7 @@ final class GravityForms_Field_Ranking {
 
 		// For Ranking fields, manipulate class names
 		if ( $this->is_ranking_field( $field ) ) {
-			$classes .= ' ranking-choices';
+			$classes .= " {$this->type}-field";
 		}
 
 		return $classes;
