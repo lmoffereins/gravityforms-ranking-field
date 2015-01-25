@@ -151,7 +151,7 @@ final class GravityForms_Field_Ranking {
 	}
 
 	/**
-	 * Return whether the given form contains a Ranking field
+	 * Return the given form's Ranking fields
 	 *
 	 * @since 1.0.0
 	 * 
