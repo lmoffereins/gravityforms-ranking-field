@@ -1,5 +1,5 @@
 /**
- * Gravity Forms Field Ranking scripts
+ * Gravity Forms Field Ranking Editor script
  *
  * @package Gravity Forms Field Ranking
  * @subpackage Administration
@@ -135,6 +135,11 @@
 
 	// On document ready
 	jQuery(document).ready( function( $ ) {
+		/**
+		 * @todo Define other settings
+		 *        - Select arrow type
+		 *        - Randomize default ranking
+		 */
 
 		// Define the Ranking fields' settings
 		fieldSettings[ settings.type ] = fieldSettings['checkbox'];

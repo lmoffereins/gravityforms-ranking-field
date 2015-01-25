@@ -118,7 +118,7 @@ final class GravityForms_Field_Ranking {
 		add_action( 'gform_editor_js', array( $this, 'admin_scripts' ) );
 
 		// Add form scripts
-		add_action( 'gform_enqueue_scripts', array( $this, 'form_scripts' ) );
+		add_action( 'gform_enqueue_scripts', array( $this, 'form_scripts' ), 10, 2 );
 
 		// Field classes
 		add_filter( 'gform_field_css_class', array( $this, 'field_classes' ), 10, 2 );
@@ -241,7 +241,7 @@ final class GravityForms_Field_Ranking {
 		$name    = 'input_' . $form_id . '_' . $field['id'];
 		$class   = isset( $field['cssClass'] ) ? array_map( 'esc_attr', explode( ' ', $field['cssClass'] ) ) : array();
 		$class[] = 'gfield_' . $this->type;
-		$class[] = ! isset( $field['arrowType'] ) || ! in_array( $field['arrowType'], array( 'arrow', 'arrow-alt', 'arrow-alt2', 'sort' ) ) ? 'icon-arrow' : 'icon-' . $field['arrowType'];
+		$class[] = ! isset( $field['arrowType'] ) || ! in_array( $field['arrowType'], array( 'arrow', 'arrow-alt', 'arrow-alt2', 'sort' ) ) ? 'icon-sort' : 'icon-' . $field['arrowType'];
 
 		// Start output buffer
 		ob_start(); ?>
@@ -359,34 +359,14 @@ final class GravityForms_Field_Ranking {
 	 * Enqueue scripts for the form settings editor
 	 *
 	 * @since 1.0.0
-	 *
-	 * @uses wp_enqueue_script()
-	 * @uses apply_filters() Calls 'gravityforms_field_ranking_editor_localize'
-	 * @uses apply_filters() Calls 'gravityforms_field_ranking_editor_settings'
-	 * @uses wp_localize_script()
 	 */
 	public function admin_scripts() { 
 
 		// Register and enqueue form editor script
 		wp_enqueue_script( 'gravityforms-field-ranking-editor', $this->includes_url . 'js/form-editor.js', array( 'gform_form_editor' ), $this->version, true );
 
-		// Define js strings
-		$localize = apply_filters( 'gravityforms_field_ranking_editor_localize', array(
-			'labelUntitled' => __( 'Untitled', 'gravityforms-field-ranking' ),
-		) );
-
-		// Define js settings
-		$settings = apply_filters( 'gravityforms_field_ranking_editor_settings', array(
-			'defaultChoices' => $this->get_field_choices(),
-			'choiceTemplate' => $this->get_choice_template(),
-		) );
-
-		// Merge strings and settings
-		$settings['type'] = $this->type;
-		$localize['settings'] = $settings;
-
-		// Localize form editor script
-		wp_localize_script( 'gravityforms-field-ranking-editor', '_gfFieldRankingL10n', $localize );
+		// Localize script
+		$this->localize_script( 'gravityforms-field-ranking-editor' );
 
 		// Add form settings editor styles
 		add_action( 'admin_footer', array( $this, 'field_styles' ) );
@@ -424,7 +404,46 @@ final class GravityForms_Field_Ranking {
 		if ( ! $this->has_form_ranking_fields( $form ) )
 			return;
 
+		// Enqueue Ranking script
+		wp_enqueue_script( 'gravityforms-field-ranking', $this->includes_url . 'js/ranking.js', array( 'jquery', 'jquery-ui-sortable' ), $this->version );
+
+		// Localize script
+		$this->localize_script( 'gravityforms-field-ranking' );
+
+		// Output Ranking styles
 		add_action( 'wp_footer', array( $this, 'field_styles' ) );
+	}
+
+	/**
+	 * Call wp_localize_script for the given script handle
+	 *
+	 * @since 1.0.0
+	 *
+	 * @uses apply_filters() Calls 'gravityforms_field_ranking_editor_localize'
+	 * @uses apply_filters() Calls 'gravityforms_field_ranking_editor_settings'
+	 * @uses wp_localize_script()
+	 * 
+	 * @param string $handle Script handle
+	 */
+	private function localize_script( $handle ) {
+
+		// Define js strings
+		$localize = apply_filters( 'gravityforms_field_ranking_localize_script', array(
+			'labelUntitled' => __( 'Untitled', 'gravityforms-field-ranking' ),
+		) );
+
+		// Define js settings
+		$settings = apply_filters( 'gravityforms_field_ranking_script_settings', array(
+			'defaultChoices' => $this->get_field_choices(),
+			'choiceTemplate' => $this->get_choice_template(),
+		) );
+
+		// Merge strings and settings
+		$settings['type'] = $this->type;
+		$localize['settings'] = $settings;
+
+		// Localize script
+		wp_localize_script( $handle, '_gfFieldRankingL10n', $localize );
 	}
 
 	/**
@@ -450,7 +469,7 @@ final class GravityForms_Field_Ranking {
 				margin: 0 0 6px;
 				padding: 0;
 			}
-			<?php echo $wrapper; ?> li {
+			<?php echo $wrapper; ?> li:not(.ui-sortable-placeholder) {
 				counter-increment: gfield-ranking-counter;
 			}
 
