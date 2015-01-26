@@ -41,11 +41,8 @@
 			}
 		}
 
-		// Setup field inputs
-		field.inputs = [];
-		for ( i = 0; i < field.choices.length; i++ ) {
-			field.inputs.push( new Input( field.id + '.' + ( i + 1 ), field.choices[ i ].text ) );
-		}
+		// Field values are stored as a single input
+		field.inputs = null;
 
 		return field;
 	};
@@ -86,8 +83,6 @@
 
 				// Walk the field's choices, which are up to date at this point
 				for ( i = 0; i < field.choices.length; i++ ) {
-					field.inputs.push( new Input( field.id + '.' + ( i + 1 ), field.choices[i].text ) );
-
 					// Only display the first 5 choices
 					if ( i < 5 ) {
 						html += ParseChoiceTemplate( field.choices[i] );

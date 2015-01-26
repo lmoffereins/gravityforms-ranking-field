@@ -122,6 +122,9 @@ final class GravityForms_Field_Ranking {
 
 		// Field classes
 		add_filter( 'gform_field_css_class', array( $this, 'field_classes' ), 10, 2 );
+
+		// Sanitize value
+		add_filter( 'gform_save_field_value', array( $this, 'sanitize_value' ), 10, 5 );
 	}
 
 	/** Public methods **************************************************/
@@ -237,8 +240,10 @@ final class GravityForms_Field_Ranking {
 		if ( ! $this->is_ranking_field( $field ) )
 			return $input;
 
-		// Define field attributes
-		$name    = 'input_' . $form_id . '_' . $field['id'];
+		// Setup input name. See GFFormsModel::save_input(). Does not care for multiple forms on a page(?)
+		$name    = 'input_' . $field['id']; 
+
+		// Define field classes
 		$class   = isset( $field['cssClass'] ) ? array_map( 'esc_attr', explode( ' ', $field['cssClass'] ) ) : array();
 		$class[] = 'gfield_' . $this->type;
 		$class[] = ! isset( $field['arrowType'] ) || ! in_array( $field['arrowType'], array( 'arrow', 'arrow-alt', 'arrow-alt2', 'sort' ) ) ? 'icon-sort' : 'icon-' . $field['arrowType'];
@@ -293,6 +298,7 @@ final class GravityForms_Field_Ranking {
 			if ( ! empty( $value ) ) {
 
 				// Sanitize value
+				$value = maybe_unserialize( $value );
 				$value = wp_parse_id_list( $value );
 
 				// Sort choices array by value order. http://stackoverflow.com/a/348418/3601434
@@ -552,6 +558,33 @@ final class GravityForms_Field_Ranking {
 		}
 
 		return $classes;
+	}
+
+	/**
+	 * Sanitize user input value
+	 *
+	 * @since 1.0.0
+	 * 
+	 * @param mixed $value User input
+	 * @param array $lead Lead data
+	 * @param array $field Field data
+	 * @param array $form Form data
+	 * @param string $input_id Input name
+	 * @return string|mixed Sanitized input value
+	 */
+	public function sanitize_value( $value, $lead, $field, $form, $input_id ) {
+
+		// Bail when this is not a Ranking field's value
+		if ( ! $this->is_ranking_field( $field ) )
+			return $value;
+
+		// Sanitize value for field's choices
+		$value = array_intersect( $value, wp_list_pluck( $field['choices'], 'value' ) );
+
+		// Concat array values. Don't serialize
+		$value = implode( ',', array_values( $value ) );
+
+		return $value;
 	}
 }
 

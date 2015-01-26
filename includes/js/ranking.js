@@ -17,7 +17,7 @@
 		// Enable drag-drop per list item
 		$( '.gfield_' + settings.type ).sortable({
 			axis: 'y',
-			handle: 'li',
+			handle: '.item-label',
 		});
 
 	});
