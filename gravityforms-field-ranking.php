@@ -612,7 +612,7 @@ final class GravityForms_Field_Ranking {
 		switch ( $position ) {
 
 			// Immediately after Description setting
-			case 1430 :
+			case 1368 :
 
 				// Randomize setting
 				$this->display_randomize_setting( $form_id );
@@ -631,7 +631,7 @@ final class GravityForms_Field_Ranking {
 
 		<li class="ranking_randomize_setting field_setting">
 			<input type="checkbox" id="ranking_randomize" name="ranking_randomize" value="1" onclick="SetFieldProperty( '<?php echo $this->randomize_setting; ?>', this.checked );" />
-			<label for="ranking_randomize" class="inline"><?php _e( 'Randomize initial choice ranking', 'gravityforms-field-ranking' ); ?> <?php gform_tooltip( 'gravityforms_field_ranking_randomize' ); ?></label>
+			<label for="ranking_randomize" class="inline"><?php _e( 'Randomize default choice ranking', 'gravityforms-field-ranking' ); ?> <?php gform_tooltip( 'gravityforms_field_ranking_randomize' ); ?></label>
 
 			<script type="text/javascript">
 				// Check setting when selecting new field
