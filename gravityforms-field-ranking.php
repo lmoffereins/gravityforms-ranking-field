@@ -124,7 +124,7 @@ final class GravityForms_Field_Ranking {
 		add_filter( 'gform_field_css_class', array( $this, 'field_classes' ), 10, 2 );
 
 		// Sanitize value
-		add_filter( 'gform_save_field_value', array( $this, 'sanitize_value' ), 10, 5 );
+		add_filter( 'gform_save_field_value', array( $this, 'sanitize_input_value' ), 10, 5 );
 	}
 
 	/** Public methods **************************************************/
@@ -572,7 +572,7 @@ final class GravityForms_Field_Ranking {
 	 * @param string $input_id Input name
 	 * @return string|mixed Sanitized input value
 	 */
-	public function sanitize_value( $value, $lead, $field, $form, $input_id ) {
+	public function sanitize_input_value( $value, $lead, $field, $form, $input_id ) {
 
 		// Bail when this is not a Ranking field's value
 		if ( ! $this->is_ranking_field( $field ) )
