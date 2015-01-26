@@ -319,6 +319,12 @@ final class GravityForms_Field_Ranking {
 					}
 				}
 				$choices = $ordered + $choices;
+
+			// Randomize default choices
+			} elseif ( isset( $field[ $this->randomize_setting ] ) && $field[ $this->randomize_setting ] ) {
+
+				// Shuffle array contents randomly
+				shuffle( $choices );
 			}
 
 			return $choices;
