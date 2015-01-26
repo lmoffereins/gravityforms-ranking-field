@@ -528,8 +528,6 @@ final class GravityForms_Field_Ranking {
 			 */
 			<?php echo $wrapper; ?> li .item-label {
 				margin: 0 0 0 10px;
-			}
-			<?php echo $wrapper; ?>:not(.icon-sort) li .item-label {
 				cursor: move;
 			}
 			<?php echo $wrapper; ?> li .item-label:before {

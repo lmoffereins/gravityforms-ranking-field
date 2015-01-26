@@ -85,7 +85,7 @@
 				for ( i = 0; i < field.choices.length; i++ ) {
 					// Only display the first 5 choices
 					if ( i < 5 ) {
-						html += ParseChoiceTemplate( field.choices[i] );
+						html += ParseChoiceTemplate( field.choices[i], field );
 					}
 				}
 
@@ -110,19 +110,28 @@
 	 * @since 1.0.0
 	 * 
 	 * @param {object} choice Choice data
+	 * @param {object} field Field data
 	 * @return {string} Choice HTML
 	 */
-	function ParseChoiceTemplate( choice ) {
-		var tmpl = settings.choiceTemplate;
+	function ParseChoiceTemplate( choice, field ) {
+		var tmpl = settings.choiceTemplate, replacement;
 
 		// Walk all replacements
-		$.each( [ 'text', 'value' ], function( index, item ) {
+		$.each( [ 'text', 'value', 'name' ], function( index, item ) {
+
+			// Define replacement value
+			switch ( item ) {
+				case 'text':
+				case 'value':
+					replacement = typeof choice[item] !== 'undefined' ? choice[item] : '';
+					break;
+				case 'name':
+					replacement = 'input_' + field.id;
+					break;
+			}
 
 			// Replace all instances of item in the template
-			tmpl = tmpl.replace( 
-				new RegExp( '{{' + item + '}}', 'g' ), 
-				typeof choice[item] !== 'undefined' ? choice[item] : ''
-			);
+			tmpl = tmpl.replace( new RegExp( '{{' + item + '}}', 'g' ), replacement );
 		});
 
 		return tmpl;
