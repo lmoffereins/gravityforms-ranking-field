@@ -27,7 +27,7 @@
 	 */
 	window[ 'SetDefaultValues_' + settings.type ] = function( field ) {
 
-		// Default to 'Untitled' field label
+		// Set field label default to 'Untitled'
 		if ( ! field.label ) {
 			field.label = l10n.labelUntitled;
 		}
@@ -38,6 +38,11 @@
 			for ( var i = 0; i < settings.defaultChoices.length; i++ ) {
 				field.choices.push( new Choice( settings.defaultChoices[ i ].text, settings.defaultChoices[ i ].value ) );
 			}
+		}
+
+		// Set default arrowType
+		if ( ! field[ settings.arrowTypeSetting ] ) {
+			field[ settings.arrowTypeSetting ] = settings.defaultArrowType;
 		}
 
 		// Field values are stored as a single input
@@ -138,13 +143,9 @@
 
 	// On document ready
 	jQuery(document).ready( function( $ ) {
-		/**
-		 * @todo Define other settings
-		 *        - Select arrow type
-		 */
 
 		// Define the Ranking fields' settings
-		fieldSettings[ settings.type ] = fieldSettings['checkbox'] + ', .ranking_randomize_setting';
+		fieldSettings[ settings.type ] = fieldSettings['checkbox'] + ', .ranking_randomize_setting, .ranking_arrow_type_setting';
 	});
 
 }( jQuery, window ) );

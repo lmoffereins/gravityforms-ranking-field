@@ -43,6 +43,12 @@ final class GravityForms_Field_Ranking {
 	protected $randomize_setting = 'rankingRandomize';
 
 	/**
+	 * Arrow Type field setting key
+	 * @var string
+	 */
+	protected $arrow_type_setting = 'rankingArrowType';
+
+	/**
 	 * Setup and return the singleton pattern
 	 *
 	 * @since 1.0.0
@@ -258,7 +264,7 @@ final class GravityForms_Field_Ranking {
 		// Define field classes
 		$class   = isset( $field['cssClass'] ) ? array_map( 'esc_attr', explode( ' ', $field['cssClass'] ) ) : array();
 		$class[] = 'gfield_' . $this->type;
-		$class[] = ! isset( $field['arrowType'] ) || ! in_array( $field['arrowType'], array( 'arrow', 'arrow-alt', 'arrow-alt2', 'sort' ) ) ? 'icon-sort' : 'icon-' . $field['arrowType'];
+		$class[] = ! isset( $field[ $this->arrow_type_setting ] ) || ! in_array( $field[ $this->arrow_type_setting ], array( 'sort', 'arrow', 'arrow-alt', 'arrow-alt2' ) ) ? 'icon-' . $this->get_default_arrow_type() : 'icon-' . $field[ $this->arrow_type_setting ];
 
 		// Start output buffer
 		ob_start(); ?>
@@ -323,8 +329,8 @@ final class GravityForms_Field_Ranking {
 				}
 				$choices = $ordered + $choices;
 
-			// Randomize default choices
-			} elseif ( isset( $field[ $this->randomize_setting ] ) && $field[ $this->randomize_setting ] ) {
+			// Randomize default choices, not for admin
+			} elseif ( ! is_admin() && isset( $field[ $this->randomize_setting ] ) && $field[ $this->randomize_setting ] ) {
 
 				// Shuffle array contents randomly
 				shuffle( $choices );
@@ -377,6 +383,18 @@ final class GravityForms_Field_Ranking {
 		 */
 		public function get_tabindex() {
 			return GFCommon::$tab_index > 0 ? ' tabindex="' . GFCommon::$tab_index++ . '"' : '';
+		}
+
+		/**
+		 * Return the default arrow type
+		 *
+		 * @since 1.0.0
+		 *
+		 * @uses apply_filters() Calls 'gravityforms_field_ranking_default_arrow_type'
+		 * @return string Arrow type
+		 */
+		public function get_default_arrow_type() {
+			return apply_filters( 'gravityforms_field_ranking_default_arrow_type', 'sort' );
 		}
 
 	/**
@@ -458,8 +476,10 @@ final class GravityForms_Field_Ranking {
 
 		// Define js settings
 		$settings = apply_filters( 'gravityforms_field_ranking_script_settings', array(
-			'defaultChoices' => $this->get_field_choices(),
-			'choiceTemplate' => $this->get_choice_template(),
+			'defaultChoices'   => $this->get_field_choices(),
+			'choiceTemplate'   => $this->get_choice_template(),
+			'arrowTypeSetting' => $this->arrow_type_setting,
+			'defaultArrowType' => $this->get_default_arrow_type(),
 		) );
 
 		// Merge strings and settings
@@ -614,11 +634,18 @@ final class GravityForms_Field_Ranking {
 	public function register_field_settings( $position, $form_id ) {
 		switch ( $position ) {
 
-			// Immediately after Description setting
+			// Immediately after Choices setting
 			case 1368 :
 
 				// Randomize setting
 				$this->display_randomize_setting( $form_id );
+				break;
+
+			// Immediately after Description setting
+			case 1430 :
+
+				// Randomize setting
+				$this->display_arrow_type_setting( $form_id );
 				break;
 		}
 	}
@@ -648,6 +675,79 @@ final class GravityForms_Field_Ranking {
 	}
 
 	/**
+	 * Display the settings field for the Arrow Type setting
+	 *
+	 * @since 1.0.0
+	 * 
+	 * @param int $form_id Form ID
+	 */
+	public function display_arrow_type_setting( $form_id ) { ?>
+
+		<li class="ranking_arrow_type_setting field_setting">
+			<label for="ranking_arrow_type"><?php _e( 'Arrow Type', 'gravityforms-field-ranking' ); ?> <?php gform_tooltip( 'ranking_arrow_type_setting' ); ?></label>
+
+			<ul>
+				<li class="icon-sort">
+					<input type="radio" id="ranking_arrow_type_sort" name="ranking_arrow_type" value="sort" onclick="SetFieldProperty( '<?php echo $this->arrow_type_setting; ?>', 'sort' );" />
+					<label for="ranking_arrow_type_sort"><i class="dashicons dashicons-sort"></i></label>
+				</li>
+				<li class="icon-arrow">
+					<input type="radio" id="ranking_arrow_type_arrow" name="ranking_arrow_type" value="arrow" onclick="SetFieldProperty( '<?php echo $this->arrow_type_setting; ?>', 'arrow' );" />
+					<label for="ranking_arrow_type_arrow"><i class="dashicons dashicons-arrow-up"></i></label>
+				</li>
+				<li class="icon-arrow-alt">
+					<input type="radio" id="ranking_arrow_type_arrow_alt" name="ranking_arrow_type" value="arrow-alt" onclick="SetFieldProperty( '<?php echo $this->arrow_type_setting; ?>', 'arrow-alt' );" />
+					<label for="ranking_arrow_type_arrow_alt"><i class="dashicons dashicons-arrow-up-alt"></i></label>
+				</li>
+				<li class="icon-arrow-alt2">
+					<input type="radio" id="ranking_arrow_type_arrow_alt2" name="ranking_arrow_type" value="arrow-alt2" onclick="SetFieldProperty( '<?php echo $this->arrow_type_setting; ?>', 'arrow-alt2' );" />
+					<label for="ranking_arrow_type_arrow_alt2"><i class="dashicons dashicons-arrow-up-alt2"></i></label>
+				</li>
+			</ul>
+
+			<script type="text/javascript">
+				// Check setting when selecting new field
+				jQuery(document).on( 'gform_load_field_settings', function( e, field, form ) {
+					jQuery( 'input[name="ranking_arrow_type"]' ).each( function(){ 
+						jQuery(this).attr( 'checked', typeof field.<?php echo $this->arrow_type_setting; ?> === 'undefined' ? false : field.<?php echo $this->arrow_type_setting; ?> === this.value );
+					});
+				});
+
+				// Live-update arrow type selection
+				jQuery( 'input[name="ranking_arrow_type"]' ).on( 'change', function() {
+					jQuery( '.field_selected .gfield_<?php echo $this->type; ?>' ).removeClass( function( index, css ) {
+						return ( css.match( /(^|\s)icon-\S+/g ) || [] ).join( ' ' );
+					}).addClass( 'icon-' + this.value );
+				});
+			</script>
+
+			<style>
+				#gform_fields .ranking_arrow_type_setting li {
+					display: inline-block;
+					padding: 0;
+					margin: 0;
+				}
+				.ranking_arrow_type_setting li input[type="radio"] {
+					display: none;
+				}
+				.ranking_arrow_type_setting li input + label i {
+					color: #999;
+					padding: 5px;
+				}
+				.ranking_arrow_type_setting li input + label i:hover {
+					background-color: #f1f1f1;
+				}
+				.ranking_arrow_type_setting li input:checked + label i {
+					background-color: #ddd;
+					color: #333;
+				}
+			</style>
+		</li>
+
+		<?php
+	}
+
+	/**
 	 * Append custom tooltips to GF's tooltip collection
 	 *
 	 * @since 1.0.0
@@ -662,7 +762,8 @@ final class GravityForms_Field_Ranking {
 
 		// Append tooltips
 		$tips = array_merge( $tips, array(
-			'ranking_randomize_setting' => sprintf( $format, __( 'Randomize', 'gravityforms-field-ranking' ), __( "When respondents submit the form without changing the field's ranking, the default ranking may be overrepresented in your form's results. Select this option to randomize the default ranking in order to mitigate this effect.",  'gravityforms-field-ranking' ) ),
+			'ranking_randomize_setting'  => sprintf( $format, __( 'Randomize',  'gravityforms-field-ranking' ), __( "When respondents submit the form without changing the field's ranking, the default ranking may be overrepresented in your form's results. Select this option to randomize the default ranking in order to mitigate this effect.", 'gravityforms-field-ranking' ) ),
+			'ranking_arrow_type_setting' => sprintf( $format, __( 'Arrow Type', 'gravityforms-field-ranking' ), __( "Select the arrow type you'd like to use as ranking icons.", 'gravityforms-field-ranking' ) ),
 		) );
 
 		return $tips;
