@@ -26,7 +26,6 @@
 	 * @return {object} field Field data
 	 */
 	window[ 'SetDefaultValues_' + settings.type ] = function( field ) {
-		var i;
 
 		// Default to 'Untitled' field label
 		if ( ! field.label ) {
@@ -36,7 +35,7 @@
 		// Set default field choices
 		if ( ! field.choices ) {
 			field.choices = [];
-			for ( i = 0; i < settings.defaultChoices.length; i++ ) {
+			for ( var i = 0; i < settings.defaultChoices.length; i++ ) {
 				field.choices.push( new Choice( settings.defaultChoices[ i ].text, settings.defaultChoices[ i ].value ) );
 			}
 		}
