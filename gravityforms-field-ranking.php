@@ -37,6 +37,12 @@ final class GravityForms_Field_Ranking {
 	protected $type = 'ranking';
 
 	/**
+	 * Randomize field setting key
+	 * @var string
+	 */
+	protected $randomize_setting = 'rankingRandomize';
+
+	/**
 	 * Setup and return the singleton pattern
 	 *
 	 * @since 1.0.0
@@ -125,6 +131,9 @@ final class GravityForms_Field_Ranking {
 
 		// Sanitize value
 		add_filter( 'gform_save_field_value', array( $this, 'sanitize_input_value' ), 10, 5 );
+
+		// Add field settings
+		add_action( 'gform_field_standard_settings', array( $this, 'register_field_settings' ), 10, 2 );
 	}
 
 	/** Public methods **************************************************/
@@ -583,6 +592,50 @@ final class GravityForms_Field_Ranking {
 		$value = implode( ',', array_values( $value ) );
 
 		return $value;
+	}
+
+	/**
+	 * Register additional field settings
+	 *
+	 * @since 1.0.0
+	 * 
+	 * @param int $position Setting's position
+	 * @param int $form_id Form ID
+	 */
+	public function register_field_settings( $position, $form_id ) {
+		switch ( $position ) {
+
+			// Immediately after Description setting
+			case 1430 :
+
+				// Randomize setting
+				$this->display_randomize_setting( $form_id );
+				break;
+		}
+	}
+
+	/**
+	 * Display the settings field for the Randomize setting
+	 *
+	 * @since 1.0.0
+	 * 
+	 * @param int $form_id Form ID
+	 */
+	public function display_randomize_setting( $form_id ) { ?>
+
+		<li class="ranking_randomize_setting field_setting">
+			<input type="checkbox" id="ranking_randomize" name="ranking_randomize" value="1" onclick="SetFieldProperty( '<?php echo $this->randomize_setting; ?>', this.checked );" />
+			<label for="ranking_randomize" class="inline"><?php _e( 'Randomize initial choice ranking', 'gravityforms-field-ranking' ); ?> <?php gform_tooltip( 'gravityforms_field_ranking_randomize' ); ?></label>
+
+			<script type="text/javascript">
+				// Check setting when selecting new field
+				jQuery(document).on( 'gform_load_field_settings', function( e, field, form ) {
+					jQuery( '#ranking_randomize' ).attr( 'checked', typeof field.<?php echo $this->randomize_setting; ?> === 'undefined' ? false : field.<?php echo $this->randomize_setting; ?> );
+				});
+			</script>
+		</li>
+
+		<?php
 	}
 }
 

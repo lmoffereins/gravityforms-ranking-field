@@ -141,11 +141,10 @@
 		/**
 		 * @todo Define other settings
 		 *        - Select arrow type
-		 *        - Randomize default ranking
 		 */
 
 		// Define the Ranking fields' settings
-		fieldSettings[ settings.type ] = fieldSettings['checkbox'];
+		fieldSettings[ settings.type ] = fieldSettings['checkbox'] + ', .ranking_randomize_setting';
 	});
 
 }( jQuery, window ) );
