@@ -134,6 +134,9 @@ final class GravityForms_Field_Ranking {
 
 		// Add field settings
 		add_action( 'gform_field_standard_settings', array( $this, 'register_field_settings' ), 10, 2 );
+
+		// Add tooltips
+		add_filter( 'gform_tooltips', array( $this, 'add_tooltips' ) );
 	}
 
 	/** Public methods **************************************************/
@@ -631,7 +634,7 @@ final class GravityForms_Field_Ranking {
 
 		<li class="ranking_randomize_setting field_setting">
 			<input type="checkbox" id="ranking_randomize" name="ranking_randomize" value="1" onclick="SetFieldProperty( '<?php echo $this->randomize_setting; ?>', this.checked );" />
-			<label for="ranking_randomize" class="inline"><?php _e( 'Randomize default choice ranking', 'gravityforms-field-ranking' ); ?> <?php gform_tooltip( 'gravityforms_field_ranking_randomize' ); ?></label>
+			<label for="ranking_randomize" class="inline"><?php _e( 'Randomize default ranking', 'gravityforms-field-ranking' ); ?> <?php gform_tooltip( 'ranking_randomize_setting' ); ?></label>
 
 			<script type="text/javascript">
 				// Check setting when selecting new field
@@ -642,6 +645,27 @@ final class GravityForms_Field_Ranking {
 		</li>
 
 		<?php
+	}
+
+	/**
+	 * Append custom tooltips to GF's tooltip collection
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $tips Tooltips
+	 * @return array Tooltips
+	 */
+	public function add_tooltips( $tips ) {
+
+		// Each tooltip consists of an <h6> header with a short description after it
+		$format = '<h6>%s</h6>%s';
+
+		// Append tooltips
+		$tips = array_merge( $tips, array(
+			'ranking_randomize_setting' => sprintf( $format, __( 'Randomize', 'gravityforms-field-ranking' ), __( "When respondents submit the form without changing the field's ranking, the default ranking may be overrepresented in your form's results. Select this option to randomize the default ranking in order to mitigate this effect.",  'gravityforms-field-ranking' ) ),
+		) );
+
+		return $tips;
 	}
 }
 
