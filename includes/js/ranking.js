@@ -18,6 +18,7 @@
 		$( '.gfield_' + settings.type ).sortable({
 			items: 'li',
 			axis: 'y',
+			containment: 'parent',
 			handle: '.ranking-sort, .item-label',
 			tolerance: 'pointer',
 
