@@ -260,7 +260,7 @@ final class GravityForms_Ranking_Field {
 		if ( ! $this->is_ranking_field( $field ) )
 			return $input;
 
-		// Setup input name. See GFFormsModel::save_input(). Does not care for multiple forms on a page(?)
+		// Setup input name. See GFFormsModel::save_input()
 		$name    = 'input_' . $field['id']; 
 
 		// Define field classes
@@ -360,7 +360,8 @@ final class GravityForms_Ranking_Field {
 
 			// Output the choice template
 			?><li>
-				<i class="dashicons"<?php echo $this->get_tabindex(); ?>></i><i class="dashicons"<?php echo $this->get_tabindex(); ?>></i><i class="dashicons"<?php echo $this->get_tabindex(); ?>></i>
+				<i class="dashicons ranking-up"<?php echo $this->get_tabindex(); ?>></i><i class="dashicons ranking-down"<?php echo $this->get_tabindex(); ?>></i>
+				<i class="dashicons ranking-sort"<?php echo $this->get_tabindex(); ?>></i>
 				<span class="item-label">{{text}}</span><input type="hidden" name="{{name}}[]" value="{{value}}"/>
 			</li><?php 
 
@@ -529,40 +530,37 @@ final class GravityForms_Ranking_Field {
 				color: #888;
 				cursor: pointer;
 			}
-			<?php echo $wrapper; ?>:not(.icon-sort) li i:nth-child(3),
-			<?php echo $wrapper; ?>.icon-sort li i:nth-child(1),
-			<?php echo $wrapper; ?>.icon-sort li i:nth-child(2) {
-				display: none;
-			}
-			<?php echo $wrapper; ?>.icon-arrow li i:nth-child(1):before {
+			<?php echo $wrapper; ?>.icon-arrow li i.ranking-up:before {
 				content: "\f142";
 			}
-			<?php echo $wrapper; ?>.icon-arrow li i:nth-child(2):before {
+			<?php echo $wrapper; ?>.icon-arrow li i.ranking-down:before {
 				content: "\f140";
 			}
-			<?php echo $wrapper; ?>.icon-arrow-alt li i:nth-child(1):before {
+			<?php echo $wrapper; ?>.icon-arrow-alt li i.ranking-up:before {
 				content: "\f342";
 			}
-			<?php echo $wrapper; ?>.icon-arrow-alt li i:nth-child(2):before {
+			<?php echo $wrapper; ?>.icon-arrow-alt li i.ranking-down:before {
 				content: "\f346";
 			}
-			<?php echo $wrapper; ?>.icon-arrow-alt2 li i:nth-child(1):before {
+			<?php echo $wrapper; ?>.icon-arrow-alt2 li i.ranking-up:before {
 				content: "\f343";
 			}
-			<?php echo $wrapper; ?>.icon-arrow-alt2 li i:nth-child(2):before {
+			<?php echo $wrapper; ?>.icon-arrow-alt2 li i.ranking-down:before {
 				content: "\f347";
 			}
 			<?php echo $wrapper; ?>.icon-sort li i {
 				cursor: move;
 			}
-			<?php echo $wrapper; ?>.icon-sort li i:before {
+			<?php echo $wrapper; ?>.icon-sort li i.ranking-sort:before {
 				content: "\f156";
 			}
-			<?php echo $wrapper; ?>.icon-sort li i:nth-child(3) {
-				display: inline-block;
+			<?php echo $wrapper; ?>.icon-sort li i.ranking-up,
+			<?php echo $wrapper; ?>.icon-sort li i.ranking-down,
+			<?php echo $wrapper; ?>:not(.icon-sort) li i.ranking-sort {
+				display: none;
 			}
-			<?php echo $wrapper; ?>:not(.icon-sort) li:first-of-type i:first-of-type,
-			<?php echo $wrapper; ?>:not(.icon-sort) li:last-of-type i:nth-child(2),
+			<?php echo $wrapper; ?>:not(.icon-sort) li:first-of-type i.ranking-up,
+			<?php echo $wrapper; ?>:not(.icon-sort) li:last-of-type i.ranking-down,
 			.wp-admin <?php echo $wrapper; ?> li i {
 				color: #d5d5d5;
 				cursor: inherit;

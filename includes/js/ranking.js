@@ -11,30 +11,30 @@
 	l10n = typeof _gfRankingFieldL10n === 'undefined' ? {} : _gfRankingFieldL10n;
 	settings = l10n.settings || {};
 
-	// On document load
+	// On document ready
 	jQuery(document).ready( function( $ ) {
 
-		// Enable drag-drop per list item
+		// Enable ranking by drag-dropping list items
 		$( '.gfield_' + settings.type ).sortable({
 			items: 'li',
 			axis: 'y',
-			handle: 'i:nth-child(3), .item-label',
+			handle: '.ranking-sort, .item-label',
 			tolerance: 'pointer'
 
-		// Enable list item sorting by clicking up/down
-		}).find( 'i:nth-child(1), i:nth-child(2)' ).on( 'click', function() {
+		// Enable ranking by clicking up(1)/down(2) arrows
+		}).filter( ':has(:not(.icon-sort))' ).find( 'i.ranking-up, i.ranking-down' ).on( 'click', function() {
 			var $handle = $(this), 
 			    $item   = $handle.parent();
 
 			// UP: switching with previous item
-			if ( $handle.is(':nth-child(1)') && ! $item.is(':first-of-type') ) {
+			if ( $handle.is( '.ranking-up' ) && ! $item.is( ':first-of-type' ) ) {
 				$item.insertBefore( $item.prev() );
 
 			// Down: switching with next item
-			} else if ( $handle.is(':nth-child(2)') && ! $item.is(':last-of-type') ) {
+			} else if ( $handle.is( '.ranking-down' ) && ! $item.is( ':last-of-type' ) ) {
 				$item.insertAfter( $item.next() );
 			}
 		});
-
 	});
+
 }( jQuery, window ));
