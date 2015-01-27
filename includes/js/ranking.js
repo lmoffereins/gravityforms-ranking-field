@@ -34,7 +34,7 @@
 			}
 
 		// Enable ranking by clicking up(1)/down(2) arrows
-		}).filter( ':has(:not(.icon-sort))' ).find( 'i.ranking-up, i.ranking-down' ).on( 'click', function() {
+		}).find( 'i.ranking-up, i.ranking-down' ).on( 'click', function() {
 			var $handle = $(this), 
 			    $item   = $handle.parent();
 
