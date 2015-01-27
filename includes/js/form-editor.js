@@ -76,7 +76,7 @@
 
 		// Override the core html method in the jQuery object
 		$.fn.html = function() {
-			$this = $(this);
+			var $this = $(this);
 
 			// When applied to the current Ranking field
 			if ( $this.parents( '.field_selected' ).length && $this.hasClass( 'gfield_' + settings.type ) ) {
