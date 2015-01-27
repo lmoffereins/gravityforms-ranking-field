@@ -519,7 +519,7 @@ final class GravityForms_Ranking_Field {
 				margin: 0 0 6px;
 				padding: 0;
 			}
-			<?php echo $wrapper; ?> li:not(.ui-sortable-placeholder) {
+			<?php echo $wrapper; ?> li:not(.ui-sortable-helper) {
 				counter-increment: ranking-field-counter;
 			}
 
@@ -579,6 +579,9 @@ final class GravityForms_Ranking_Field {
 			<?php echo $wrapper; ?> li .item-label:before {
 				content: counter( ranking-field-counter ) ".";
 				margin: 0 5px 0 0;
+			}
+			<?php echo $wrapper; ?> li.ui-sortable-helper .item-label:before {
+				content: attr( data-counter ) ".";
 			}
 		</style>
 
