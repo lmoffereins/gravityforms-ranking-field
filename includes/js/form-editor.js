@@ -144,8 +144,18 @@
 	// On document ready
 	jQuery(document).ready( function( $ ) {
 
-		// Define the Ranking fields' settings
-		fieldSettings[ settings.type ] = fieldSettings['checkbox'] + ', .ranking_randomize_setting, .ranking_arrow_type_setting';
+		// Define the Ranking field's settings
+		fieldSettings[ settings.type ] = [
+			'.conditional_logic_field_setting',
+			'.label_setting',
+			'.admin_label_setting',
+			'.choices_setting',
+			'.visibility_setting',
+			'.description_setting',
+			'.css_class_setting',
+			'.ranking_randomize_setting',
+			'.ranking_arrow_type_setting'
+		].join();
 	});
 
 }( jQuery, window ) );
