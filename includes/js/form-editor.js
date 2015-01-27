@@ -1,14 +1,14 @@
 /**
- * Gravity Forms Field Ranking Editor script
+ * Gravity Forms Ranking Field Editor script
  *
- * @package Gravity Forms Field Ranking
+ * @package Gravity Forms Ranking Field
  * @subpackage Administration
  */
 ( function( $, window ) {
 	var l10n, settings;
 
 	// Link any localized strings and settings
-	l10n = typeof _gfFieldRankingL10n === 'undefined' ? {} : _gfFieldRankingL10n;
+	l10n = typeof _gfRankingFieldL10n === 'undefined' ? {} : _gfRankingFieldL10n;
 	settings = l10n.settings || {};
 
 	/**

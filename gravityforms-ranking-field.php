@@ -1,34 +1,34 @@
 <?php
 
 /**
- * The Gravity Forms Field Ranking Plugin
+ * The Gravity Forms Ranking Field Plugin
  * 
- * @package Gravity Forms Field Ranking
+ * @package Gravity Forms Ranking Field
  * @subpackage Main
  */
 
 /**
- * Plugin Name:       Gravity Forms Field Ranking
- * Description:       Adds a field to Gravity Forms to rank options
- * Plugin URI:        https://github.com/lmoffereins/gravityforms-field-ranking/
+ * Plugin Name:       Gravity Forms Ranking Field
+ * Description:       Adds a field to Gravity Forms for ranking choices
+ * Plugin URI:        https://github.com/lmoffereins/gravityforms-ranking-field/
  * Version:           1.0.0
  * Author:            Laurens Offereins
  * Author URI:        https://github.com/lmoffereins/
- * Text Domain:       gravityforms-field-ranking
+ * Text Domain:       gravityforms-ranking-field
  * Domain Path:       /languages/
- * GitHub Plugin URI: lmoffereins/gravityforms-field-ranking
+ * GitHub Plugin URI: lmoffereins/gravityforms-ranking-field
  */
 
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
-if ( ! class_exists( 'GravityForms_Field_Ranking' ) ) :
+if ( ! class_exists( 'GravityForms_Ranking_Field' ) ) :
 /**
  * The main plugin class
  *
  * @since 1.0.0
  */
-final class GravityForms_Field_Ranking {
+final class GravityForms_Ranking_Field {
 
 	/**
 	 * The plugin's field type name
@@ -53,9 +53,9 @@ final class GravityForms_Field_Ranking {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @uses GravityForms_Field_Ranking::setup_globals()
-	 * @uses GravityForms_Field_Ranking::setup_actions()
-	 * @return The single GravityForms_Field_Ranking
+	 * @uses GravityForms_Ranking_Field::setup_globals()
+	 * @uses GravityForms_Ranking_Field::setup_actions()
+	 * @return The single GravityForms_Ranking_Field
 	 */
 	public static function instance() {
 
@@ -63,7 +63,7 @@ final class GravityForms_Field_Ranking {
 		static $instance = null;
 
 		if ( null === $instance ) {
-			$instance = new GravityForms_Field_Ranking;
+			$instance = new GravityForms_Ranking_Field;
 			$instance->setup_globals();
 			$instance->setup_actions();
 		}
@@ -107,7 +107,7 @@ final class GravityForms_Field_Ranking {
 		/** Misc **************************************************************/
 		
 		$this->extend       = new stdClass();
-		$this->domain       = 'gravityforms-field-ranking';
+		$this->domain       = 'gravityforms-ranking-field';
 	}
 
 	/**
@@ -213,7 +213,7 @@ final class GravityForms_Field_Ranking {
 		// Append to the Standard Fields group
 		$field_groups[ $group ]['fields'][] = array(
 			'class'   => 'button',
-			'value'   => __( 'Ranking', 'gravityforms-field-ranking' ),
+			'value'   => __( 'Ranking', 'gravityforms-ranking-field' ),
 			'onclick' => "StartAddField( '{$this->type}' );" // Default GF onclick function
 		);
 
@@ -232,7 +232,7 @@ final class GravityForms_Field_Ranking {
 
 		// For Ranking fields, name accordingly
 		if ( $this->is_ranking_field( $type ) ) {
-			$title = __( 'Ranking', 'gravityforms-field-ranking' );
+			$title = __( 'Ranking', 'gravityforms-ranking-field' );
 		} else {
 			$title = $type;
 		}
@@ -282,7 +282,7 @@ final class GravityForms_Field_Ranking {
 		// End output buffer
 		$input = ob_get_clean();
 
-		return apply_filters( 'gravityforms_field_ranking_field', $input, $field, $value, $lead_id, $form_id );
+		return apply_filters( 'gravityforms_ranking_field_field', $input, $field, $value, $lead_id, $form_id );
 	}
 
 		/**
@@ -304,9 +304,9 @@ final class GravityForms_Field_Ranking {
 			} else {
 				$choices = array();
 				foreach ( array(
-					__( 'First Choice',  'gravityforms-field-ranking' ),
-					__( 'Second Choice', 'gravityforms-field-ranking' ),
-					__( 'Third Choice',  'gravityforms-field-ranking' )
+					__( 'First Choice',  'gravityforms-ranking-field' ),
+					__( 'Second Choice', 'gravityforms-ranking-field' ),
+					__( 'Third Choice',  'gravityforms-ranking-field' )
 				) as $choice ) {
 					$choices[] = array( 'text' => $choice, 'value' => $choice );
 				}
@@ -344,8 +344,8 @@ final class GravityForms_Field_Ranking {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @uses GravityForms_Field_Ranking::get_tabindex()
-		 * @uses apply_filters() Calls 'gravityforms_field_ranking_choice_template'
+		 * @uses GravityForms_Ranking_Field::get_tabindex()
+		 * @uses apply_filters() Calls 'gravityforms_ranking_field_choice_template'
 		 * 
 		 * @param array $choice Optional. Choice data to parse
 		 * @param string $name Optional. Input name to parse
@@ -369,7 +369,7 @@ final class GravityForms_Field_Ranking {
 				$tmpl = str_replace( '{{name}}', esc_attr( $name ), $tmpl );
 			}
 
-			return apply_filters( 'gravityforms_field_ranking_choice_template', $tmpl, $choice, $name );
+			return apply_filters( 'gravityforms_ranking_field_choice_template', $tmpl, $choice, $name );
 		}
 
 		/**
@@ -390,11 +390,11 @@ final class GravityForms_Field_Ranking {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @uses apply_filters() Calls 'gravityforms_field_ranking_default_arrow_type'
+		 * @uses apply_filters() Calls 'gravityforms_ranking_field_default_arrow_type'
 		 * @return string Arrow type
 		 */
 		public function get_default_arrow_type() {
-			return apply_filters( 'gravityforms_field_ranking_default_arrow_type', 'sort' );
+			return apply_filters( 'gravityforms_ranking_field_default_arrow_type', 'sort' );
 		}
 
 	/**
@@ -405,10 +405,10 @@ final class GravityForms_Field_Ranking {
 	public function admin_scripts() { 
 
 		// Register and enqueue form editor script
-		wp_enqueue_script( 'gravityforms-field-ranking-editor', $this->includes_url . 'js/form-editor.js', array( 'gform_form_editor' ), $this->version, true );
+		wp_enqueue_script( 'gravityforms-ranking-field-editor', $this->includes_url . 'js/form-editor.js', array( 'gform_form_editor' ), $this->version, true );
 
 		// Localize script
-		$this->localize_script( 'gravityforms-field-ranking-editor' );
+		$this->localize_script( 'gravityforms-ranking-field-editor' );
 
 		// Add form settings editor styles
 		add_action( 'admin_footer', array( $this, 'field_styles' ) );
@@ -447,10 +447,10 @@ final class GravityForms_Field_Ranking {
 			return;
 
 		// Enqueue Ranking script
-		wp_enqueue_script( 'gravityforms-field-ranking', $this->includes_url . 'js/ranking.js', array( 'jquery', 'jquery-ui-sortable' ), $this->version );
+		wp_enqueue_script( 'gravityforms-ranking-field', $this->includes_url . 'js/ranking.js', array( 'jquery', 'jquery-ui-sortable' ), $this->version );
 
 		// Localize script
-		$this->localize_script( 'gravityforms-field-ranking' );
+		$this->localize_script( 'gravityforms-ranking-field' );
 
 		// Output Ranking styles
 		add_action( 'wp_footer', array( $this, 'field_styles' ) );
@@ -461,8 +461,8 @@ final class GravityForms_Field_Ranking {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @uses apply_filters() Calls 'gravityforms_field_ranking_editor_localize'
-	 * @uses apply_filters() Calls 'gravityforms_field_ranking_editor_settings'
+	 * @uses apply_filters() Calls 'gravityforms_ranking_field_localize_script'
+	 * @uses apply_filters() Calls 'gravityforms_ranking_field_editor_settings'
 	 * @uses wp_localize_script()
 	 * 
 	 * @param string $handle Script handle
@@ -470,12 +470,12 @@ final class GravityForms_Field_Ranking {
 	private function localize_script( $handle ) {
 
 		// Define js strings
-		$localize = apply_filters( 'gravityforms_field_ranking_localize_script', array(
-			'labelUntitled' => __( 'Untitled', 'gravityforms-field-ranking' ),
+		$localize = apply_filters( 'gravityforms_ranking_field_localize_script', array(
+			'labelUntitled' => __( 'Untitled', 'gravityforms-ranking-field' ),
 		) );
 
 		// Define js settings
-		$settings = apply_filters( 'gravityforms_field_ranking_script_settings', array(
+		$settings = apply_filters( 'gravityforms_ranking_field_script_settings', array(
 			'defaultChoices'   => $this->get_field_choices(),
 			'choiceTemplate'   => $this->get_choice_template(),
 			'arrowTypeSetting' => $this->arrow_type_setting,
@@ -487,7 +487,7 @@ final class GravityForms_Field_Ranking {
 		$localize['settings'] = $settings;
 
 		// Localize script
-		wp_localize_script( $handle, '_gfFieldRankingL10n', $localize );
+		wp_localize_script( $handle, '_gfRankingFieldL10n', $localize );
 	}
 
 	/**
@@ -507,14 +507,14 @@ final class GravityForms_Field_Ranking {
 			<?php echo $wrapper; ?> {
 				margin: 6px 0;
 				list-style: none;
-				counter-reset: gfield-ranking-counter;
+				counter-reset: ranking-field-counter;
 			}
 			#gform_fields <?php echo $wrapper; ?> li {
 				margin: 0 0 6px;
 				padding: 0;
 			}
 			<?php echo $wrapper; ?> li:not(.ui-sortable-placeholder) {
-				counter-increment: gfield-ranking-counter;
+				counter-increment: ranking-field-counter;
 			}
 
 			/**
@@ -569,7 +569,7 @@ final class GravityForms_Field_Ranking {
 				cursor: move;
 			}
 			<?php echo $wrapper; ?> li .item-label:before {
-				content: counter(gfield-ranking-counter) ".";
+				content: counter( ranking-field-counter ) ".";
 				margin: 0 5px 0 0;
 			}
 		</style>
@@ -661,7 +661,7 @@ final class GravityForms_Field_Ranking {
 
 		<li class="ranking_randomize_setting field_setting">
 			<input type="checkbox" id="ranking_randomize" name="ranking_randomize" value="1" onclick="SetFieldProperty( '<?php echo $this->randomize_setting; ?>', this.checked );" />
-			<label for="ranking_randomize" class="inline"><?php _e( 'Randomize default ranking', 'gravityforms-field-ranking' ); ?> <?php gform_tooltip( 'ranking_randomize_setting' ); ?></label>
+			<label for="ranking_randomize" class="inline"><?php _e( 'Randomize default ranking', 'gravityforms-ranking-field' ); ?> <?php gform_tooltip( 'ranking_randomize_setting' ); ?></label>
 
 			<script type="text/javascript">
 				// Check setting when selecting new field
@@ -684,7 +684,7 @@ final class GravityForms_Field_Ranking {
 	public function display_arrow_type_setting( $form_id ) { ?>
 
 		<li class="ranking_arrow_type_setting field_setting">
-			<label for="ranking_arrow_type"><?php _e( 'Arrow Type', 'gravityforms-field-ranking' ); ?> <?php gform_tooltip( 'ranking_arrow_type_setting' ); ?></label>
+			<label for="ranking_arrow_type"><?php _e( 'Arrow Type', 'gravityforms-ranking-field' ); ?> <?php gform_tooltip( 'ranking_arrow_type_setting' ); ?></label>
 
 			<ul>
 				<li class="icon-sort">
@@ -713,7 +713,7 @@ final class GravityForms_Field_Ranking {
 					});
 				});
 
-				// Live-update arrow type selection
+				// Live-preview arrow type selection
 				jQuery( 'input[name="ranking_arrow_type"]' ).on( 'change', function() {
 					jQuery( '.field_selected .gfield_<?php echo $this->type; ?>' ).removeClass( function( index, css ) {
 						return ( css.match( /(^|\s)icon-\S+/g ) || [] ).join( ' ' );
@@ -762,8 +762,8 @@ final class GravityForms_Field_Ranking {
 
 		// Append tooltips
 		$tips = array_merge( $tips, array(
-			'ranking_randomize_setting'  => sprintf( $format, __( 'Randomize',  'gravityforms-field-ranking' ), __( "When respondents submit the form without changing the field's ranking, the default ranking may be overrepresented in your form's results. Select this option to randomize the default ranking in order to mitigate this effect.", 'gravityforms-field-ranking' ) ),
-			'ranking_arrow_type_setting' => sprintf( $format, __( 'Arrow Type', 'gravityforms-field-ranking' ), __( "Select the arrow type you'd like to use as ranking icons.", 'gravityforms-field-ranking' ) ),
+			'ranking_randomize_setting'  => sprintf( $format, __( 'Randomize',  'gravityforms-ranking-field' ), __( "When respondents submit the form without changing the field's ranking, the default ranking may be overrepresented in your form's results. Select this option to randomize the default ranking in order to mitigate this effect.", 'gravityforms-ranking-field' ) ),
+			'ranking_arrow_type_setting' => sprintf( $format, __( 'Arrow Type', 'gravityforms-ranking-field' ), __( "Select the arrow type you'd like to use as ranking icons.", 'gravityforms-ranking-field' ) ),
 		) );
 
 		return $tips;
@@ -771,22 +771,22 @@ final class GravityForms_Field_Ranking {
 }
 
 /**
- * Return single instance of this main plugin class
+ * Return single instance of the main plugin class
  *
  * @since 1.0.0
  * 
- * @return GravityForms_Field_Ranking
+ * @return GravityForms_Ranking_Field
  */
-function gravityforms_field_ranking() {
+function gravityforms_ranking_field() {
 
 	// Bail when GF is not active
 	if ( ! class_exists( 'GFForms' ) )
 		return;
 
-	return GravityForms_Field_Ranking::instance();
+	return GravityForms_Ranking_Field::instance();
 }
 
 // Initiate on plugins_loaded
-add_action( 'plugins_loaded', 'gravityforms_field_ranking' );
+add_action( 'plugins_loaded', 'gravityforms_ranking_field' );
 
 endif; // class_exists
