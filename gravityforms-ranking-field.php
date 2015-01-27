@@ -357,7 +357,10 @@ final class GravityForms_Ranking_Field {
 			ob_start(); 
 
 			// Output the choice template
-			?><li><i class="dashicons-before"<?php echo $this->get_tabindex(); ?>></i><i class="dashicons-before"<?php echo $this->get_tabindex(); ?>></i><span class="item-label">{{text}}</span><input type="hidden" name="{{name}}[]" value="{{value}}"/></li><?php 
+			?><li>
+				<i class="dashicons"<?php echo $this->get_tabindex(); ?>></i><i class="dashicons"<?php echo $this->get_tabindex(); ?>></i><i class="dashicons"<?php echo $this->get_tabindex(); ?>></i>
+				<span class="item-label">{{text}}</span><input type="hidden" name="{{name}}[]" value="{{value}}"/>
+			</li><?php 
 
 			// Return output buffer content
 			$tmpl = ob_get_clean();
@@ -524,6 +527,11 @@ final class GravityForms_Ranking_Field {
 				color: #888;
 				cursor: pointer;
 			}
+			<?php echo $wrapper; ?>:not(.icon-sort) li i:nth-child(3),
+			<?php echo $wrapper; ?>.icon-sort li i:nth-child(1),
+			<?php echo $wrapper; ?>.icon-sort li i:nth-child(2) {
+				display: none;
+			}
 			<?php echo $wrapper; ?>.icon-arrow li i:nth-child(1):before {
 				content: "\f142";
 			}
@@ -548,11 +556,11 @@ final class GravityForms_Ranking_Field {
 			<?php echo $wrapper; ?>.icon-sort li i:before {
 				content: "\f156";
 			}
-			<?php echo $wrapper; ?>.icon-sort li i:nth-child(2) {
-				display: none;
+			<?php echo $wrapper; ?>.icon-sort li i:nth-child(3) {
+				display: inline-block;
 			}
 			<?php echo $wrapper; ?>:not(.icon-sort) li:first-of-type i:first-of-type,
-			<?php echo $wrapper; ?>:not(.icon-sort) li:last-of-type i:last-of-type,
+			<?php echo $wrapper; ?>:not(.icon-sort) li:last-of-type i:nth-child(2),
 			.wp-admin <?php echo $wrapper; ?> li i {
 				color: #d5d5d5;
 				cursor: inherit;

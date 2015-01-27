@@ -15,9 +15,11 @@
 	jQuery(document).ready( function( $ ) {
 
 		// Enable drag-drop per list item
-		$( '.gfield_' + settings.type ).sortable({
+		$( '.ginput_container:has(.gfield_' + settings.type + ')' ).sortable({
+			items: 'li',
 			axis: 'y',
-			handle: '.item-label',
+			handle: 'i:nth-child(3), .item-label',
+			tolerance: 'pointer'
 		});
 
 	});
