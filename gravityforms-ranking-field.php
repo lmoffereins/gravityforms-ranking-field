@@ -273,8 +273,8 @@ final class GravityForms_Ranking_Field {
 
 		<div class="ginput_container">
 			<ol class="<?php echo implode( ' ', $class ); ?>">
-				<?php foreach ( $this->get_field_choices( $field, $value ) as $choice ) : ?>
-					<?php echo $this->get_choice_template( $choice, $name ); ?>
+				<?php foreach ( $this->get_field_choices( $field, $value ) as $key => $choice ) : ?>
+					<?php echo $this->get_choice_template( $choice, $name . '.' . ( $key + 1 ) ); ?>
 				<?php endforeach; ?>
 			</ol>
 		</div>
@@ -362,7 +362,7 @@ final class GravityForms_Ranking_Field {
 			?><li>
 				<i class="dashicons ranking-up"<?php echo $this->get_tabindex(); ?>></i><i class="dashicons ranking-down"<?php echo $this->get_tabindex(); ?>></i>
 				<i class="dashicons ranking-sort"<?php echo $this->get_tabindex(); ?>></i>
-				<span class="item-label">{{text}}</span><input type="hidden" name="{{name}}[]" value="{{value}}"/>
+				<span class="item-label">{{text}}</span><input type="hidden" name="{{name}}" value="{{value}}"/>
 			</li><?php 
 
 			// Return output buffer content
@@ -625,13 +625,36 @@ final class GravityForms_Ranking_Field {
 		if ( ! $this->is_ranking_field( $field ) )
 			return $value;
 
-		// Sanitize value for field's choices
-		$value = array_intersect( $value, wp_list_pluck( $field['choices'], 'value' ) );
+		// Collect ranked choices
+		$choices = array_filter( $_POST, function( $input ) use ( $field ) {
 
-		// Concat array values. Don't serialize
-		$value = implode( ',', array_values( $value ) );
+			// Get the current field's inputs
+			return in_array( $input, wp_list_pluck( $field['choices'], 'value' ) );
+		});
 
-		return $value;
+		/**
+		 * Since, at this moment, we're sanitizing the value for the given field's
+		 * choice (input_id), we need to find the position of the associated choice's
+		 * value. Note that in case of randomizatino, the inputs may be parsed with
+		 * a different choice's input value.
+		 * 
+		 * So we need to find the original input's choice's value, and then find
+		 * that value's position in the submitted form data.
+		 */
+
+		// Get the input's number
+		$input_number =  substr( $input_id, -1 );
+
+		// Get the input's choice
+		$choice = $field['choices'][ $input_number - 1 ];
+
+		// Get the choice's value
+		$value = $choice['value'];
+
+		// Find posted choice's position
+		$input = array_search( array_search( $value, $choices ), array_keys( $choices ) ) + 1;
+
+		return apply_filters( 'gravityforms_ranking_field_input_value', $input, $lead, $choice, $field, $form );
 	}
 
 	/**

@@ -45,8 +45,11 @@
 			field[ settings.arrowTypeSetting ] = settings.defaultArrowType;
 		}
 
-		// Field values are stored as a single input
-		field.inputs = null;
+		// Store field values as individual inputs
+		field.inputs = [];
+		for ( var i = 0; i < field.choices.length; i++ ) {
+			field.inputs.push( new Input( field.id + '.' + ( i + 1 ), field.choices[ i ].text ) );
+		}
 
 		return field;
 	};
@@ -83,10 +86,17 @@
 
 				// Get the current field object, define local variable(s)
 				var field = GetSelectedField(),
-				    html = '', i;
+				    html = '';
+
+				// Reset field inputs
+				field.inputs = [];
 
 				// Walk the field's choices, which are up to date at this point
-				for ( i = 0; i < field.choices.length; i++ ) {
+				for ( var i = 0; i < field.choices.length; i++ ) {
+
+					// Regenerate inputs
+					field.inputs.push( new Input( field.id + '.' + ( i + 1 ), field.choices[ i ].text ) );
+
 					// Only display the first 5 choices
 					if ( i < 5 ) {
 						html += ParseChoiceTemplate( field.choices[i], field );
@@ -130,7 +140,7 @@
 					replacement = typeof choice[item] !== 'undefined' ? choice[item] : '';
 					break;
 				case 'name':
-					replacement = 'input_' + field.id;
+					replacement = 'input_' + field.id + '.' + ( field.choices.map( function( i ) { return i.value; } ).indexOf( choice.value ) + 1 );
 					break;
 			}
 
