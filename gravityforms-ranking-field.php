@@ -5,8 +5,6 @@
  * 
  * @package Gravity Forms Ranking Field
  * @subpackage Main
- *
- * @todo Use per-choice inputs to enable better entry outputs and conditional logic
  */
 
 /**
