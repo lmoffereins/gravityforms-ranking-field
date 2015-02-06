@@ -120,7 +120,7 @@ final class GravityForms_Ranking_Field {
 		// Add field button
 		add_filter( 'gform_add_field_buttons', array( $this, 'add_field_button' ) );
 
-		// Set field title
+		// Set field type title
 		add_filter( 'gform_field_type_title', array( $this, 'set_field_title' ) );
 
 		// Render the field
@@ -624,10 +624,11 @@ final class GravityForms_Ranking_Field {
 			return $value;
 
 		// Collect ranked choices
-		$choices = array_filter( $_POST, function( $input ) use ( $field ) {
+		$choice_values = wp_list_pluck( $field['choices'], 'value' );
+		$choices = array_filter( $_POST, function( $input ) use ( $choice_values ) {
 
 			// Get the current field's inputs
-			return in_array( $input, wp_list_pluck( $field['choices'], 'value' ) );
+			return in_array( $input, $choice_values );
 		});
 
 		/**
@@ -641,7 +642,7 @@ final class GravityForms_Ranking_Field {
 		 */
 
 		// Get the input's number
-		$input_number =  substr( $input_id, -1 );
+		$input_number = substr( $input_id, -1 );
 
 		// Get the input's choice
 		$choice = $field['choices'][ $input_number - 1 ];
