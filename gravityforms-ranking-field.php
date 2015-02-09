@@ -265,7 +265,8 @@ final class GravityForms_Ranking_Field {
 			return $input;
 
 		// Setup input name. See GFFormsModel::save_input()
-		$name    = 'input_' . $field['id']; 
+		$name    = 'input_' . $field['id'];
+		$choices = $this->get_field_choices( $field, $value );
 
 		// Define field classes
 		$class   = isset( $field['cssClass'] ) ? array_map( 'esc_attr', explode( ' ', $field['cssClass'] ) ) : array();
@@ -277,9 +278,18 @@ final class GravityForms_Ranking_Field {
 
 		<div class="ginput_container">
 			<ol class="<?php echo implode( ' ', $class ); ?>">
-				<?php foreach ( $this->get_field_choices( $field, $value ) as $key => $choice ) : ?>
-					<?php echo $this->get_choice_template( $choice, $name . '.' . ( $key + 1 ) ); ?>
-				<?php endforeach; ?>
+				<?php foreach ( $choices as $key => $choice ) : 
+
+					// Preview up to 5 items ...
+					if ( $key < 5 ) {
+						echo $this->get_choice_template( $choice, $name . '.' . ( $key + 1 ) );
+
+					// ... and notify accordingly
+					} else {
+						echo '<li class="gchoice_total">' . sprintf( __( '5 of %d items shown. Edit field to view all', 'gravityforms' ), count( $choices ) ) . '</li>';
+						break;
+					}
+				endforeach; ?>
 			</ol>
 		</div>
 
