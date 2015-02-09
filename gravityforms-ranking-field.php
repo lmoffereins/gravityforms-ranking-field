@@ -43,6 +43,12 @@ final class GravityForms_Ranking_Field {
 	protected $randomize_setting = 'rankingRandomize';
 
 	/**
+	 * Randomize field setting key
+	 * @var string
+	 */
+	protected $inverted_values_setting = 'rankingInvertedValues';
+
+	/**
 	 * Arrow Type field setting key
 	 * @var string
 	 */
@@ -653,6 +659,11 @@ final class GravityForms_Ranking_Field {
 		// Find posted choice's position
 		$input = array_search( array_search( $value, $choices ), array_keys( $choices ) ) + 1;
 
+		// Invert the choice values
+		if ( isset( $field[ $this->inverted_values_setting ] ) && $field[ $this->inverted_values_setting ] ) {
+			$input = count( $choice_values ) + 1 - $input; // 1 of 5 becomes 6 - 1 = 5
+		}
+
 		return apply_filters( 'gravityforms_ranking_field_input_value', $input, $lead, $choice, $field, $form );
 	}
 
@@ -672,12 +683,15 @@ final class GravityForms_Ranking_Field {
 
 				// Randomize setting
 				$this->display_randomize_setting( $form_id );
+
+				// Inveted Values setting
+				$this->display_inverted_values_setting( $form_id );
 				break;
 
 			// Immediately after Description setting
 			case 1430 :
 
-				// Randomize setting
+				// Arrow Type setting
 				$this->display_arrow_type_setting( $form_id );
 				break;
 		}
@@ -700,6 +714,30 @@ final class GravityForms_Ranking_Field {
 				// Check setting when selecting new field
 				jQuery(document).on( 'gform_load_field_settings', function( e, field, form ) {
 					jQuery( '#ranking_randomize' ).attr( 'checked', typeof field.<?php echo $this->randomize_setting; ?> === 'undefined' ? false : field.<?php echo $this->randomize_setting; ?> );
+				});
+			</script>
+		</li>
+
+		<?php
+	}
+
+	/**
+	 * Display the settings field for the Inverted Values setting
+	 *
+	 * @since 1.1.0
+	 * 
+	 * @param int $form_id Form ID
+	 */
+	public function display_inverted_values_setting( $form_id ) { ?>
+
+		<li class="ranking_inverted_values_setting field_setting">
+			<input type="checkbox" id="ranking_inverted_values" name="ranking_inverted_values" value="1" onclick="SetFieldProperty( '<?php echo $this->inverted_values_setting; ?>', this.checked );" />
+			<label for="ranking_inverted_values" class="inline"><?php _e( 'Invert ranking values', 'gravityforms-ranking-field' ); ?> <?php gform_tooltip( 'ranking_inverted_values_setting' ); ?></label>
+
+			<script type="text/javascript">
+				// Check setting when selecting new field
+				jQuery(document).on( 'gform_load_field_settings', function( e, field, form ) {
+					jQuery( '#ranking_inverted_values' ).attr( 'checked', typeof field.<?php echo $this->inverted_values_setting; ?> === 'undefined' ? false : field.<?php echo $this->inverted_values_setting; ?> );
 				});
 			</script>
 		</li>
@@ -795,8 +833,9 @@ final class GravityForms_Ranking_Field {
 
 		// Append tooltips
 		$tips = array_merge( $tips, array(
-			'ranking_randomize_setting'  => sprintf( $format, __( 'Randomize',  'gravityforms-ranking-field' ), __( "When respondents submit the form without changing the field's ranking, the default ranking may be overrepresented in your form's results. Select this option to randomize the default ranking in order to mitigate this effect.", 'gravityforms-ranking-field' ) ),
-			'ranking_arrow_type_setting' => sprintf( $format, __( 'Arrow Type', 'gravityforms-ranking-field' ), __( "Select the arrow type you'd like to use as ranking icons.", 'gravityforms-ranking-field' ) ),
+			'ranking_randomize_setting'       => sprintf( $format, __( 'Randomize',       'gravityforms-ranking-field' ), __( "When respondents submit the form without changing the field's ranking, the default ranking may be overrepresented in your form's results. Select this option to randomize the default ranking in order to mitigate this effect.", 'gravityforms-ranking-field' ) ),
+			'ranking_inverted_values_setting' => sprintf( $format, __( 'Inverted Values', 'gravityforms-ranking-field' ), __( "By default, ranked choices are saved as 1 for the first choice, 2 for the second, etc. Select this option to do this the other way around, meaning 1 for the last choice, 2 for the next-to-last, etc.", 'gravityforms-ranking-field' ) ),
+			'ranking_arrow_type_setting'      => sprintf( $format, __( 'Arrow Type',      'gravityforms-ranking-field' ), __( "Select the arrow type you'd like to use as ranking icons.", 'gravityforms-ranking-field' ) ),
 		) );
 
 		return $tips;
