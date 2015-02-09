@@ -169,6 +169,8 @@ final class GravityForms_Ranking_Field {
 	 * Return whether the given form contains a Ranking field
 	 *
 	 * @since 1.0.0
+	 *
+	 * @uses GravityForms_Ranking_Field::get_form_ranking_fields()
 	 * 
 	 * @param object|int $form Form data or form ID
 	 * @return bool Form contains a Ranking field
@@ -181,6 +183,8 @@ final class GravityForms_Ranking_Field {
 	 * Return the given form's Ranking fields
 	 *
 	 * @since 1.0.0
+	 * 
+	 * @uses GFFormsModel::get_form_meta()
 	 * 
 	 * @param object|int $form Form data or form ID
 	 * @return array Form field ids or empty array when no Ranking fields found
@@ -231,6 +235,8 @@ final class GravityForms_Ranking_Field {
 	 *
 	 * @since 1.0.0
 	 * 
+	 * @uses GravityForms_Ranking_Field::is_ranking_field()
+	 * 
 	 * @param string $type Field type
 	 * @return string Field title or field type
 	 */
@@ -250,6 +256,11 @@ final class GravityForms_Ranking_Field {
 	 * Return the field's input markup
 	 *
 	 * @since 1.0.0
+	 * 
+	 * @uses GravityForms_Ranking_Field::is_ranking_field()
+	 * @uses GravityForms_Ranking_Field::get_field_choices()
+	 * @uses GravityForms_Ranking_Field::get_choice_template()
+	 * @uses apply_filters() Calls 'gravityforms_ranking_field_field'
 	 * 
 	 * @param string $input Field's input markup
 	 * @param array $field Field data
@@ -421,6 +432,8 @@ final class GravityForms_Ranking_Field {
 	 * Enqueue scripts for the form settings editor
 	 *
 	 * @since 1.0.0
+	 * 
+	 * @uses GravityForms_Ranking_Field::localize_script()
 	 */
 	public function admin_scripts() { 
 
@@ -456,6 +469,9 @@ final class GravityForms_Ranking_Field {
 	 * Enqueue scripts for the given form on the front-end
 	 *
 	 * @since 1.0.0
+	 * 
+	 * @uses GravityForms_Ranking_Field::has_form_ranking_fields()
+	 * @uses GravityForms_Ranking_Field::localize_script()
 	 *
 	 * @param array $form Form data
 	 * @param bool $ajax Whether we're doing an AJAX form
@@ -607,6 +623,8 @@ final class GravityForms_Ranking_Field {
 	 *
 	 * @since 1.0.0
 	 * 
+	 * @uses GravityForms_Ranking_Field::is_ranking_field()
+	 * 
 	 * @param string $classes Field class names
 	 * @param array $field Field data
 	 * @return string Field class names
@@ -625,6 +643,9 @@ final class GravityForms_Ranking_Field {
 	 * Sanitize user input value
 	 *
 	 * @since 1.0.0
+	 * 
+	 * @uses GravityForms_Ranking_Field::is_ranking_field()
+	 * @uses apply_filters() Calls 'gravityforms_ranking_field_input_value'
 	 * 
 	 * @param mixed $value User input
 	 * @param array $lead Lead data
@@ -681,6 +702,10 @@ final class GravityForms_Ranking_Field {
 	 * Register additional field settings
 	 *
 	 * @since 1.0.0
+	 * 
+	 * @uses GravityForms_Ranking_Field::display_randomize_setting()
+	 * @uses GravityForms_Ranking_Field::display_invert_setting()
+	 * @uses GravityForms_Ranking_Field::display_arrow_type_setting()
 	 * 
 	 * @param int $position Setting's position
 	 * @param int $form_id Form ID
