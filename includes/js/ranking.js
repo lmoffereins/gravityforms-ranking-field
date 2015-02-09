@@ -24,14 +24,14 @@
 
 			// Live-update the dragged list item counter
 			start: function( e, ui ) {
-				ui.item.find('.item-label').attr( 'data-counter', ui.placeholder.index() );
+				ui.item.find( '.item-label' ).attr( 'data-counter', ui.placeholder.index() );
 			},
 			change: function( e, ui ) {
 				var index = ui.placeholder.index();
-				ui.item.find('.item-label').attr( 'data-counter', ( index > ui.item.index() ) ? index : index + 1 );
+				ui.item.find( '.item-label' ).attr( 'data-counter', ( index > ui.item.index() ) ? index : index + 1 );
 			},
 			update: function( e, ui ) {
-				ui.item.find('.item-label').removeAttr( 'data-counter' );
+				ui.item.find( '.item-label' ).removeAttr( 'data-counter' );
 			}
 
 		// Enable ranking by clicking up(1)/down(2) arrows

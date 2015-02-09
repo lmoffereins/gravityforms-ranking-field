@@ -71,9 +71,9 @@
 	 *
 	 * @see UpdateFieldChoices() 
 	 * 
-	 * @param  {object} $    jQuery
-	 * @param  {object} html jQuery's original html method
-	 * @return {object}      jQuery
+	 * @param  {object} $          jQuery
+	 * @param  {object} htmlMethod jQuery's original html method
+	 * @return {object}            jQuery
 	 */
 	( function( $, htmlMethod ) {
 
