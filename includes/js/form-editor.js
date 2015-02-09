@@ -164,7 +164,7 @@
 			'.description_setting',
 			'.css_class_setting',
 			'.ranking_randomize_setting',
-			'.ranking_inverted_values_setting',
+			'.ranking_invert_setting',
 			'.ranking_arrow_type_setting'
 		].join();
 	});
