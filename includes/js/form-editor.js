@@ -1,5 +1,5 @@
 /**
- * Gravity Forms Ranking Field Editor script
+ * Gravity Forms Ranking Field Form Editor script
  *
  * @package Gravity Forms Ranking Field
  * @subpackage Administration
@@ -58,7 +58,8 @@
 	 * GF uses UpdateFieldChoices() to translate the choice settings back
 	 * to the field's preview. But since UpdateFieldChoices() does not allow 
 	 * for field-type specific logic or hooking (only hardcoded 'select', 
-	 * 'checkbox', 'radio' or 'list'), we here do declare our own implementation.
+	 * 'checkbox', 'radio' or 'list' types can have field choices), we here 
+	 * do declare our own implementation.
 	 */
 
 	/**
@@ -127,7 +128,7 @@
 	 * @param {object} field Field data
 	 * @return {string} Choice HTML
 	 */
-	function ParseChoiceTemplate( choice, field ) {
+	ParseChoiceTemplate = function( choice, field ) {
 		var tmpl = settings.choiceTemplate, replacement;
 
 		// Walk all replacements
@@ -149,13 +150,15 @@
 		});
 
 		return tmpl;
-	}
+	};
 
 	// On document ready
 	jQuery(document).ready( function( $ ) {
 
 		// Define the Ranking field's settings
 		fieldSettings[ settings.type ] = [
+
+			// Default settings
 			'.conditional_logic_field_setting',
 			'.label_setting',
 			'.admin_label_setting',
@@ -163,10 +166,103 @@
 			'.visibility_setting',
 			'.description_setting',
 			'.css_class_setting',
+
+			// Ranking settings
 			'.ranking_randomize_setting',
 			'.ranking_invert_setting',
 			'.ranking_arrow_type_setting'
 		].join();
 	});
+
+	/**
+	 * Conditional Logic
+	 */
+
+	gform.addFilter( 'gform_is_conditional_logic_field',     'EnableConditionalLogic',    10, 2 );
+	gform.addFilter( 'gform_conditional_logic_operators',    'ConditionalLogicOperators', 10, 3 );
+	gform.addFilter( 'gform_conditional_logic_values_input', 'ConditionalLogicValues',    10, 5 );
+
+	/**
+	 * Enable Conditional Logic for Ranking fields
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param {bool} enabled Whether the field has Conditional Logic enabled
+	 * @param {object} field The evaluated field data
+	 * @return {bool} Enabled
+	 */
+	EnableConditionalLogic = function( enabled, field ) {
+		return ( field.type === settings.type ) ? true : enabled;
+	};
+
+	/**
+	 * Filter the Conditional Logic operators for Ranking fields
+	 *
+	 * @since 1.2.0
+	 * 
+	 * @param {object} operators Collection of operators
+	 * @param {string} objectType Conditional Logic object type
+	 * @param {string} fieldId The field ID of the current rule
+	 * @return {object} Collection of operators
+	 */
+	ConditionalLogicOperators = function( operators, objectType, fieldId ) {
+		var field = GetFieldById( fieldId ), stringKey, l10nStringKey;
+
+		// When these are a Ranking field's operators
+		if ( 'field' === objectType && field && field.type === settings.type ) {
+
+			// Clean operators collection
+			operators = {};
+
+			// Define operators. Keys are operator IDs, values are string keys in gf_vars global
+			for ( var i = 1; field.choices.length >= i; i++ ) {
+
+				// Define l10n string to use
+				if ( i == 1 ) {
+					l10nStringKey = 'rankingRuleOperatorFirst';
+				} else if ( i == field.choices.length ) {
+					l10nStringKey = 'rankingRuleOperatorLast';
+				} else {
+					l10nStringKey = 'rankingRuleOperatorNum';
+				}
+
+				// Define operator's stringKey
+				stringKey = 'rankingRuleOperator' + i;
+
+				// Set operator
+				operators[ i - 1 ] = stringKey;
+
+				// Add translatable string to GF's string collection
+				gf_vars[ stringKey ] = l10n[ l10nStringKey ].replace( '%d', i );
+			};
+		}
+
+		return operators;
+	};
+
+	/**
+	 * Filter the Conditional Logic values for Ranking fields
+	 *
+	 * @since 1.2.0
+	 *
+	 * @uses GetRuleValuesDropdown()
+	 * 
+	 * @param {string} html Values input element
+	 * @param {string} objectType Conditional Logic object type
+	 * @param {int} ruleIndex Index of the current rule
+	 * @param {int} fieldId The field ID of the current rule
+	 * @param {string} selectedValue The selected rule's value
+	 * @return {string} Values input element
+	 */
+	ConditionalLogicValues = function( html, objectType, ruleIndex, fieldId, selectedValue ) {
+		var field = GetFieldById( fieldId );
+
+		// When these are a Ranking field's values
+		if ( 'field' === objectType && field && field.type === settings.type ) {
+			html = GetRuleValuesDropDown( field.choices, objectType, ruleIndex, selectedValue, false );
+		}
+
+		return html;
+	};
 
 }( jQuery, window ) );

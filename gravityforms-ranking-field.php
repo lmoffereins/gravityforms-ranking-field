@@ -144,6 +144,9 @@ final class GravityForms_Ranking_Field {
 		// Sanitize value
 		add_filter( 'gform_save_field_value', array( $this, 'sanitize_input_value' ), 10, 5 );
 
+		// Evaluate conditional logic
+		add_filter( 'gform_is_value_match', array( $this, 'eval_conditional_logic_rule' ), 10, 5 );
+
 		// Add field settings
 		add_action( 'gform_field_standard_settings', array( $this, 'register_field_settings' ), 10, 2 );
 
@@ -275,6 +278,9 @@ final class GravityForms_Ranking_Field {
 		if ( ! $this->is_ranking_field( $field ) )
 			return $input;
 
+		// Define local variable(s)
+		$is_admin = is_admin();
+
 		// Setup input name. See GFFormsModel::save_input()
 		$name    = 'input_' . $field['id'];
 		$choices = $this->get_field_choices( $field, $value );
@@ -284,15 +290,18 @@ final class GravityForms_Ranking_Field {
 		$class[] = 'gfield_' . $this->type;
 		$class[] = ! isset( $field[ $this->arrow_type_setting ] ) || ! in_array( $field[ $this->arrow_type_setting ], array( 'sort', 'arrow', 'arrow-alt', 'arrow-alt2' ) ) ? 'icon-' . $this->get_default_arrow_type() : 'icon-' . $field[ $this->arrow_type_setting ];
 
+		// Conditional Logic
+		$cl_fields = ( $is_admin || empty( $field['conditionalLogicFields'] ) ) ? '' : ' data-clfields="' . implode( ',', $field['conditionalLogicFields'] ) . '"';
+
 		// Start output buffer
 		ob_start(); ?>
 
 		<div class="ginput_container">
-			<ol class="<?php echo implode( ' ', $class ); ?>">
+			<ol class="<?php echo implode( ' ', $class ); ?>"<?php echo $cl_fields; ?>>
 				<?php foreach ( $choices as $key => $choice ) : 
 
 					// Within the form editor, preview up to 5 items ...
-					if ( ! is_admin() || $key < 5 ) {
+					if ( ! $is_admin || $key < 5 ) {
 						echo $this->get_choice_template( $choice, $name . '.' . ( $key + 1 ) );
 
 					// ... and notify accordingly
@@ -508,6 +517,11 @@ final class GravityForms_Ranking_Field {
 		// Define js strings
 		$localize = apply_filters( 'gravityforms_ranking_field_localize_script', array(
 			'labelUntitled' => __( 'Untitled', 'gravityforms-ranking-field' ),
+
+			// Conditional Logic
+			'rankingRuleOperatorFirst' => __( 'starts with',  'gravityforms-ranking-field' ),
+			'rankingRuleOperatorNum'   => __( 'choice %d is', 'gravityforms-ranking-field' ),
+			'rankingRuleOperatorLast'  => __( 'ends with',    'gravityforms-ranking-field' ),
 		) );
 
 		// Define js settings
@@ -664,7 +678,7 @@ final class GravityForms_Ranking_Field {
 		$choice_values = wp_list_pluck( $field['choices'], 'value' );
 		$choices = array_filter( $_POST, function( $input ) use ( $choice_values ) {
 
-			// Get the current field's inputs
+			// Get the current field's posted inputs
 			return in_array( $input, $choice_values );
 		});
 
@@ -696,6 +710,41 @@ final class GravityForms_Ranking_Field {
 		}
 
 		return apply_filters( 'gravityforms_ranking_field_input_value', $input, $lead, $choice, $field, $form );
+	}
+
+	/**
+	 * Modify the matched value for Ranking fields conditional logic
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param bool $match The rule's result
+	 * @param string $curr_value The rule's field current value
+	 * @param string $target_value The rule's target value
+	 * @param string $operation The operation type
+	 * @param array $field The rule's field data
+	 * @return bool The rule's result
+	 */
+	public function eval_conditional_logic_rule( $match, $curr_value, $target_value, $operation, $field ) {
+
+		// Bail when not evaluating Ranking fields
+		if ( ! $this->is_ranking_field( $field ) )
+			return $match;
+
+		// Current value is not defined
+		if ( array() === array_filter( $curr_value ) ) {
+			
+			// Randomized
+			if ( isset( $field[ $this->randomize_setting ] ) && $field[ $this->randomize_setting ] ) {
+				$curr_value = array(); // @todo How to get the shuffled order of the yet-to-render field?
+			} else {
+				$curr_value = wp_list_pluck( $field['choices'], 'value' );
+			}
+		}
+
+		// Check the target value for the expected position
+		$match = ( (int) $operation ) === array_search( $target_value, $curr_value );
+
+		return $match;
 	}
 
 	/**
