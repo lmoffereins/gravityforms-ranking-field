@@ -685,7 +685,7 @@ final class GravityForms_Ranking_Field {
 		/**
 		 * Since, at this moment, we're sanitizing the value for the given field's
 		 * choice (input_id), we need to find the position of the associated choice's
-		 * value. Note that in case of randomizatino, the inputs may be parsed with
+		 * value. Note that in case of randomization, the inputs may be parsed with
 		 * a different choice's input value.
 		 * 
 		 * So we need to find the original input's choice's value, and then find
@@ -713,7 +713,7 @@ final class GravityForms_Ranking_Field {
 	}
 
 	/**
-	 * Modify the matched value for Ranking fields conditional logic
+	 * Modify the rule's result for Ranking fields conditional logic
 	 *
 	 * @since 1.2.0
 	 *
