@@ -291,8 +291,8 @@ final class GravityForms_Ranking_Field {
 			<ol class="<?php echo implode( ' ', $class ); ?>">
 				<?php foreach ( $choices as $key => $choice ) : 
 
-					// Preview up to 5 items ...
-					if ( $key < 5 ) {
+					// Within the form editor, preview up to 5 items ...
+					if ( ! is_admin() || $key < 5 ) {
 						echo $this->get_choice_template( $choice, $name . '.' . ( $key + 1 ) );
 
 					// ... and notify accordingly
