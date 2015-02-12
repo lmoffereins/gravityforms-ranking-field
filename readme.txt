@@ -19,6 +19,8 @@ Activate Gravity Forms Ranking Field in the "Plugins" admin panel using the "Act
 
 = 1.2.0 =
 * Added Conditional Logic for Ranking fields
+* Added loading translations
+* Added Dutch translation
 
 = 1.1.0 =
 * Added setting to save the ranked choices invertedly
