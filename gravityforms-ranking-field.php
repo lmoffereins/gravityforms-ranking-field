@@ -157,6 +157,41 @@ final class GravityForms_Ranking_Field {
 	/** Public methods **************************************************/
 
 	/**
+	 * Load the translation file for current language. Checks the languages
+	 * folder inside the plugin first, and then the default WordPress
+	 * languages folder.
+	 *
+	 * Note that custom translation files inside the plugin folder will be
+	 * removed on plugin updates. If you're creating custom translation
+	 * files, please use the global language folder.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @uses apply_filters() Calls 'plugin_locale' with {@link get_locale()} value
+	 * @uses load_textdomain() To load the textdomain
+	 * @uses load_plugin_textdomain() To load the textdomain
+	 */
+	public function load_textdomain() {
+	
+		// Traditional WordPress plugin locale filter
+		$locale        = apply_filters( 'plugin_locale', get_locale(), $this->domain );
+		$mofile        = sprintf( '%1$s-%2$s.mo', $this->domain, $locale );
+	
+		// Setup paths to current locale file
+		$mofile_local  = $this->lang_dir . $mofile;
+		$mofile_global = WP_LANG_DIR . '/gravityforms-ranking-field/' . $mofile;
+	
+		// Look in global /wp-content/languages/gravityforms-ranking-field folder
+		load_textdomain( $this->domain, $mofile_global );
+	
+		// Look in local /wp-content/plugins/gravityforms-ranking-field/languages/ folder
+		load_textdomain( $this->domain, $mofile_local );
+	
+		// Look in global /wp-content/languages/plugins/
+		load_plugin_textdomain( $this->domain );
+	}
+
+	/**
 	 * Return whether the given field is a Ranking field
 	 *
 	 * @since 1.0.0
@@ -518,10 +553,11 @@ final class GravityForms_Ranking_Field {
 		$localize = apply_filters( 'gravityforms_ranking_field_localize_script', array(
 			'labelUntitled' => __( 'Untitled', 'gravityforms-ranking-field' ),
 
-			// Conditional Logic
-			'rankingRuleOperatorFirst' => __( 'starts with',  'gravityforms-ranking-field' ),
-			'rankingRuleOperatorNum'   => __( 'choice %d is', 'gravityforms-ranking-field' ),
-			'rankingRuleOperatorLast'  => __( 'ends with',    'gravityforms-ranking-field' ),
+			// Conditional Logic. Text is used ltr as GF does: 
+			/* translators: Conditional Logic rule operators, used ltr: <field> %s <value> */
+			'rankingRuleOperatorFirst' => _x( 'starts with',  'gravityforms-ranking-field' ),
+			'rankingRuleOperatorNum'   => _x( 'choice %d is', 'gravityforms-ranking-field' ),
+			'rankingRuleOperatorLast'  => _x( 'ends with',    'gravityforms-ranking-field' ),
 		) );
 
 		// Define js settings
@@ -533,7 +569,7 @@ final class GravityForms_Ranking_Field {
 		) );
 
 		// Merge strings and settings
-		$settings['type'] = $this->type;
+		$settings['type']     = $this->type;
 		$localize['settings'] = $settings;
 
 		// Localize script
@@ -768,7 +804,7 @@ final class GravityForms_Ranking_Field {
 				// Randomize setting
 				$this->display_randomize_setting( $form_id );
 
-				// Invet setting
+				// Invert setting
 				$this->display_invert_setting( $form_id );
 				break;
 
@@ -792,7 +828,7 @@ final class GravityForms_Ranking_Field {
 
 		<li class="ranking_randomize_setting field_setting">
 			<input type="checkbox" id="ranking_randomize" name="ranking_randomize" value="1" onclick="SetFieldProperty( '<?php echo $this->randomize_setting; ?>', this.checked );" />
-			<label for="ranking_randomize" class="inline"><?php _e( 'Randomize default ranking', 'gravityforms-ranking-field' ); ?> <?php gform_tooltip( 'ranking_randomize_setting' ); ?></label>
+			<label for="ranking_randomize" class="inline"><?php _e( 'Randomize initial ranking', 'gravityforms-ranking-field' ); ?> <?php gform_tooltip( 'ranking_randomize_setting' ); ?></label>
 
 			<script type="text/javascript">
 				// Check setting when selecting new field

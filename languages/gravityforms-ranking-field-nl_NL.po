@@ -1,0 +1,151 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Gravity Forms Ranking Field v1.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2015-02-12 07:20:17+0000\n"
+"Last-Translator: laurens <lmoffereins@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: CSL v1.x\n"
+"X-Poedit-Language: Dutch\n"
+"X-Poedit-Country: NETHERLANDS\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Textdomain-Support: yes"
+
+#. translators: plugin header field 'Name'
+#: gravityforms-ranking-field.php:0
+#@ gravityforms-ranking-field
+msgid "Gravity Forms Ranking Field"
+msgstr ""
+
+#. translators: plugin header field 'PluginURI'
+#: gravityforms-ranking-field.php:0
+#@ gravityforms-ranking-field
+msgid "https://github.com/lmoffereins/gravityforms-ranking-field/"
+msgstr ""
+
+#. translators: plugin header field 'Description'
+#: gravityforms-ranking-field.php:0
+#@ gravityforms-ranking-field
+msgid "Adds a field to Gravity Forms for ranking choices"
+msgstr "Voegt een veld toe aan Gravity Forms om keuzes te ordenen"
+
+#. translators: plugin header field 'Author'
+#: gravityforms-ranking-field.php:0
+#@ gravityforms-ranking-field
+msgid "Laurens Offereins"
+msgstr ""
+
+#. translators: plugin header field 'AuthorURI'
+#: gravityforms-ranking-field.php:0
+#@ gravityforms-ranking-field
+msgid "https://github.com/lmoffereins/"
+msgstr ""
+
+#. translators: plugin header field 'Version'
+#: gravityforms-ranking-field.php:0
+#@ gravityforms-ranking-field
+msgid "1.1.0"
+msgstr ""
+
+#: gravityforms-ranking-field.php:264
+#: gravityforms-ranking-field.php:285
+#@ gravityforms-ranking-field
+msgid "Ranking"
+msgstr "Ordenen"
+
+#: gravityforms-ranking-field.php:344
+#, php-format
+#@ gravityforms
+msgid "5 of %d items shown. Edit field to view all"
+msgstr ""
+
+#: gravityforms-ranking-field.php:378
+#@ gravityforms-ranking-field
+msgid "First Choice"
+msgstr "Eerste keuze"
+
+#: gravityforms-ranking-field.php:379
+#@ gravityforms-ranking-field
+msgid "Second Choice"
+msgstr "Tweede keuze"
+
+#: gravityforms-ranking-field.php:380
+#@ gravityforms-ranking-field
+msgid "Third Choice"
+msgstr "Derde keuze"
+
+#: gravityforms-ranking-field.php:554
+#@ gravityforms-ranking-field
+msgid "Untitled"
+msgstr "Geen titel"
+
+#. translators: Conditional Logic rule operators, used ltr: <field> %s <value>
+#: gravityforms-ranking-field.php:558
+#@ default
+msgctxt "gravityforms-ranking-field"
+msgid "starts with"
+msgstr ""
+
+#: gravityforms-ranking-field.php:559
+#, php-format
+#@ default
+msgctxt "gravityforms-ranking-field"
+msgid "choice %d is"
+msgstr ""
+
+#: gravityforms-ranking-field.php:560
+#@ default
+msgctxt "gravityforms-ranking-field"
+msgid "ends with"
+msgstr ""
+
+#: gravityforms-ranking-field.php:855
+#@ gravityforms-ranking-field
+msgid "Invert ranking result"
+msgstr "Draai het resultaat om"
+
+#: gravityforms-ranking-field.php:878
+#: gravityforms-ranking-field.php:958
+#@ gravityforms-ranking-field
+msgid "Arrow Type"
+msgstr "Pijltype"
+
+#: gravityforms-ranking-field.php:956
+#@ gravityforms-ranking-field
+msgid "Randomize"
+msgstr "Willekeurige volgorde"
+
+#: gravityforms-ranking-field.php:956
+#@ gravityforms-ranking-field
+msgid "When respondents submit the form without changing the field's ranking, the default ranking may be overrepresented in your form's results. Select this option to randomize the default ranking in order to mitigate this effect."
+msgstr "Wanneer respondenten een formulier verzenden zonder de volgorde van de keuzes te wijzigen, kan de oorspronkelijke volgorde overgerepresenteerd zijn in de resultaten. Kies deze optie om dit effect tegen te gaan door de volgorde willekeurig te maken."
+
+#: gravityforms-ranking-field.php:957
+#@ gravityforms-ranking-field
+msgid "Invert"
+msgstr "Draai om"
+
+#: gravityforms-ranking-field.php:957
+#@ gravityforms-ranking-field
+msgid "By default, ranked choices are saved as 1 for the first choice, 2 for the second, etc. Select this option to invert the choice order, saving the choices the other way around, meaning 1 for the last choice, 2 for the second-to-last, etc."
+msgstr "Gewoonlijk worden geordende keuzes opgeslagen als 1 voor de eerste keuze, 2 voor de tweede, enz. Kies deze optie om de volgorde om te draaien, zodat de laatste keuze 1 krijgt, 2 voor de een-na-laatste, enz."
+
+#: gravityforms-ranking-field.php:958
+#@ gravityforms-ranking-field
+msgid "Select the arrow type you'd like to use as ranking icons."
+msgstr "Kies het pijltype dat je wilt gebruiken als icoontjes voor het sorteren."
+
+#: gravityforms-ranking-field.php:831
+#@ gravityforms-ranking-field
+msgid "Randomize initial ranking"
+msgstr ""
+
