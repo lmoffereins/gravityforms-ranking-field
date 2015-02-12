@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Gravity Forms Ranking Field v1.1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-02-12 07:20:17+0000\n"
+"PO-Revision-Date: 2015-02-12 07:26:38+0000\n"
 "Last-Translator: laurens <lmoffereins@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -36,7 +36,7 @@ msgstr ""
 #: gravityforms-ranking-field.php:0
 #@ gravityforms-ranking-field
 msgid "Adds a field to Gravity Forms for ranking choices"
-msgstr "Voegt een veld toe aan Gravity Forms om keuzes te ordenen"
+msgstr "Voegt een veld toe aan Gravity Forms om keuzes in volgorde te zetten"
 
 #. translators: plugin header field 'Author'
 #: gravityforms-ranking-field.php:0
@@ -60,7 +60,7 @@ msgstr ""
 #: gravityforms-ranking-field.php:285
 #@ gravityforms-ranking-field
 msgid "Ranking"
-msgstr "Ordenen"
+msgstr "Volgorde"
 
 #: gravityforms-ranking-field.php:344
 #, php-format
@@ -142,10 +142,10 @@ msgstr "Gewoonlijk worden geordende keuzes opgeslagen als 1 voor de eerste keuze
 #: gravityforms-ranking-field.php:958
 #@ gravityforms-ranking-field
 msgid "Select the arrow type you'd like to use as ranking icons."
-msgstr "Kies het pijltype dat je wilt gebruiken als icoontjes voor het sorteren."
+msgstr "Kies het pijltype dat je wilt gebruiken als icoontjes voor het ordenen."
 
 #: gravityforms-ranking-field.php:831
 #@ gravityforms-ranking-field
 msgid "Randomize initial ranking"
-msgstr ""
+msgstr "Maak oorspronkelijke volgorde willekeurig"
 
