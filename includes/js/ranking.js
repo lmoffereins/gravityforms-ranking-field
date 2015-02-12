@@ -1,5 +1,5 @@
 /**
- * Gravity Forms Ranking Field script
+ * Gravity Forms Ranking Field Front script
  *
  * @package Gravity Forms Ranking Field
  * @subpackage Administration
@@ -19,17 +19,17 @@
 			items: 'li',
 			axis: 'y',
 			containment: 'parent',
-			handle: '.ranking-sort, .item-label',
+			handle: '.ranking-sort, .item-label', // Use both elements as handle
 			tolerance: 'pointer',
 
-			// Handle when list item dragging starts
+			// Act when list item dragging starts
 			start: function( e, ui ) {
 
 				// Define original list item counter
 				ui.item.find( '.item-label' ).attr( 'data-counter', ui.placeholder.index() );
 			},
 
-			// Handle when list item is being dragged into a new place
+			// Act when list item is being dragged into a new place
 			change: function( e, ui ) {
 
 				// Live update the dragged list item counter
@@ -37,7 +37,7 @@
 				ui.item.find( '.item-label' ).attr( 'data-counter', ( index > ui.item.index() ) ? index : index + 1 );
 			},
 
-			// Handle when list item was dropped and the list order was changed
+			// Act when list item was dropped and the list order was changed
 			update: function( e, ui ) {
 
 				// Remove the dragged list item counter
@@ -49,20 +49,20 @@
 				var clFields = ui.item.parent().attr( 'data-clfields' );
 				if ( clFields ) {
 					// Send the form ID and an array of field IDs to apply their rules
-					gf_apply_rules( ui.item.parents( 'form[id^="gform_"]' ).attr( 'id' ).match( /\d+/)[0], clFields.split( ',' ) );
+					gf_apply_rules( ui.item.parents( 'form[id^="gform_"]' ).attr( 'id' ).match( /\d+/ )[0], clFields.split( ',' ) );
 				}
 			}
 
-		// Enable ranking by clicking up(1)/down(2) arrows
+		// Enable ranking by clicking up/down arrows
 		}).find( 'i.ranking-up, i.ranking-down' ).on( 'click', function() {
 			var $handle = $(this), 
 			    $item   = $handle.parent();
 
-			// Up: switching with previous item
+			// Up: switch with previous item
 			if ( $handle.is( '.ranking-up' ) && ! $item.is( ':first-of-type' ) ) {
 				$item.insertBefore( $item.prev() );
 
-			// Down: switching with next item
+			// Down: switch with next item
 			} else if ( $handle.is( '.ranking-down' ) && ! $item.is( ':last-of-type' ) ) {
 				$item.insertAfter( $item.next() );
 			}
@@ -92,7 +92,7 @@
 		// When this rule concerns a Ranking field
 		if ( $field && $field.hasClass( settings.type + '-field' ) ) {
 
-			// Get the field's choices
+			// Get the field choices' values. Assuming all hidden inputs are ranking choices.
 			$field.find( 'li input[type="hidden"]' ).each( function( i, el ) {
 				choices.push( el.value );
 			});
