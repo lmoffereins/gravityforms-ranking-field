@@ -122,6 +122,9 @@ final class GravityForms_Ranking_Field {
 	 * @since 1.0.0
 	 */
 	private function setup_actions() {
+
+		// Load textdomain
+		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
 		
 		// Add field button
 		add_filter( 'gform_add_field_buttons', array( $this, 'add_field_button' ) );
