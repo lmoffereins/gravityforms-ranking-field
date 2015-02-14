@@ -11,7 +11,7 @@
  * Plugin Name:       Gravity Forms Ranking Field
  * Description:       Adds a field to Gravity Forms for ranking choices
  * Plugin URI:        https://github.com/lmoffereins/gravityforms-ranking-field/
- * Version:           1.1.0
+ * Version:           1.2.0
  * Author:            Laurens Offereins
  * Author URI:        https://github.com/lmoffereins/
  * Text Domain:       gravityforms-ranking-field
@@ -93,7 +93,7 @@ final class GravityForms_Ranking_Field {
 
 		/** Versions **********************************************************/
 		
-		$this->version      = '1.1.0';
+		$this->version      = '1.2.0';
 		
 		/** Paths *************************************************************/
 		
