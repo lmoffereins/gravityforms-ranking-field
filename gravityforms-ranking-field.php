@@ -535,6 +535,9 @@ final class GravityForms_Ranking_Field {
 		// Localize script
 		$this->localize_script( 'gravityforms-ranking-field' );
 
+		// Ensure dashicons are loaded
+		wp_enqueue_style( 'dashicons' );
+
 		// Output Ranking styles
 		add_action( 'wp_footer', array( $this, 'field_styles' ) );
 	}
