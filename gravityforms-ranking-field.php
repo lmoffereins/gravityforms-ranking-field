@@ -123,6 +123,10 @@ final class GravityForms_Ranking_Field {
 	 */
 	private function setup_actions() {
 
+		// Bail when GF is not active
+		if ( ! class_exists( 'GFForms' ) )
+			return;
+
 		// Load textdomain
 		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
 		
@@ -976,11 +980,6 @@ final class GravityForms_Ranking_Field {
  * @return GravityForms_Ranking_Field
  */
 function gravityforms_ranking_field() {
-
-	// Bail when GF is not active
-	if ( ! class_exists( 'GFForms' ) )
-		return;
-
 	return GravityForms_Ranking_Field::instance();
 }
 
