@@ -159,6 +159,9 @@ final class GravityForms_Ranking_Field {
 
 		// Add tooltips
 		add_filter( 'gform_tooltips', array( $this, 'add_tooltips' ) );
+
+		// Display field value on entry details page
+		add_filter( 'gform_entry_field_value', array( $this, 'display_field_value'    ), 10, 4 );
 	}
 
 	/** Public methods **************************************************/
@@ -969,6 +972,56 @@ final class GravityForms_Ranking_Field {
 		) );
 
 		return $tips;
+	}
+
+	/**
+	 * Return a valid display entry value for Ranking fields
+	 *
+	 * @since 1.2.1
+	 *
+	 * @uses GravityForms_Ranking_field::is_ranking_field()
+	 * @uses GFFormsModel::get_lead_field_value()
+	 * 
+	 * @param mixed $value Display entry value for this field
+	 * @param array $field Field data
+	 * @param array $entry Entry data
+	 * @param array $form  Form data
+	 * @return string Entry field display value
+	 */
+	public function display_field_value( $value, $field, $entry = array(), $form = array() ) {
+
+		// For Ranking fields only
+		if ( $this->is_ranking_field( $field ) ) {
+
+			// Treat the given value as raw
+			$raw_value = $value;
+
+			// Retry to get the raw entry value
+			if ( null === $raw_value && ! empty( $entry ) ) {
+				$raw_value = GFFormsModel::get_lead_field_value( $entry, $field );
+			}
+
+			// Only process when a value is found
+			if ( is_array( $raw_value ) ) {
+
+				// Sort choices by ranking
+				asort( $raw_value );
+
+				// Return choices as list
+				$value = '<ul>';
+
+				// Setup choice list with choice labels
+				foreach ( (array) $raw_value as $input_id => $item ) {
+					$input = array_values( wp_list_filter( $field['inputs'], array( 'id' => $input_id ) ) );
+					$value .= '<li>' . $input[0]['label'] . '</li>';
+				}
+
+				// Close list
+				$value .= '</ul>';
+			}
+		}
+
+		return $value;
 	}
 }
 
